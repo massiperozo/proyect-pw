@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Butacas</title>
+</head>
+<body>
+    <div class="containe" id="conatainerTotal">
+        <div class="cines">
+            <select name="zona" id="zonaCine">
+                <option value=""></option>
+            </select>
+        </div>
+    
+            <button id="prueba">prueba</button>
+        </div>    
+    </div>
+    <script>
+        const urlBase = "https://cinexunidos-production.up.railway.app";
+        
+            fetch(`${urlBase}/theatres`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(element => {
+                    console.log(element)
+                });
+            })
+
+        
+
+    </script>
+</body>
+</html>

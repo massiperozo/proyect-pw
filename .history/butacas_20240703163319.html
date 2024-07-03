@@ -7,7 +7,12 @@
 </head>
 <body>
     <div class="containe" id="conatainerTotal">
-        <div id="cines" class="cines">   
+        <div id="cines" class="cines">
+            
+        </div>
+    
+            <button id="prueba">prueba</button>
+        </div>    
     </div>
     <script>
         
@@ -19,9 +24,8 @@
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-                const cinesHTML = `<button>${element.name}</button>`
+                const cinesHTML = `<button>${element.name}}</button>`
                 cineCont.innerHTML += cinesHTML;
-                console.log(element);
             });
         })
 

@@ -7,21 +7,23 @@
 </head>
 <body>
     <div class="containe" id="conatainerTotal">
-        <div id="cines" class="cines">   
+        <div class="cines">
+            
+        </div>
+    
+            <button id="prueba">prueba</button>
+        </div>    
     </div>
     <script>
         
         const urlBase = "https://cinexunidos-production.up.railway.app";
 
-        const cineCont = document.getElementById('cines');
-
         fetch(`${urlBase}/theatres`)
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-                const cinesHTML = `<button>${element.name}</button>`
-                cineCont.innerHTML += cinesHTML;
-                console.log(element);
+                const cinesHTML = `<button>${element.name}}</button>`
+
             });
         })
 
