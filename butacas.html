@@ -7,25 +7,213 @@
 </head>
 <body>
     <div class="containe" id="conatainerTotal">
-        <div id="cines" class="cines">   
+        <div id="cines" class="cines">  
+        <div id="Cartelera" class="Cartelera">     
+              
     </div>
+    <div class="containe2" id="conatainerTota2">  
+        <div id="Salas" class="Salas">             
+    </div>
+
+    <div class="containe3" id="conatainerTota3">  
+        <div id="Butacas" class="Butacas">             
+    </div>
+
     <script>
         
         const urlBase = "https://cinexunidos-production.up.railway.app";
-
         const cineCont = document.getElementById('cines');
+        const CarteleraCont = document.getElementById('Cartelera');
+        const salasCont = document.getElementById('Salas');
+        
+
+        let PelisNoRepetidas=[];
+        let Salas=[];
+        let horas=[];
+
+
 
         fetch(`${urlBase}/theatres`)
         .then(response => response.json())
         .then(data => {
             data.forEach(element => {
-                const cinesHTML = `<button>${element.name}</button>`
-                cineCont.innerHTML += cinesHTML;
+                const button = document.createElement('button');
+                button.textContent = element.name;
+                button.addEventListener('click', () => {
+                    Mostrar_Pelis(element.id);
+                    Ocultar();
+                });
+                cineCont.appendChild(button);
                 console.log(element);
             });
         })
+   
+function Ocultar() {
+    const cineButtons = document.querySelectorAll('#cines button');
+    cineButtons.forEach(button => {
+        button.style.display = 'none';
+  });
+}
 
-        
+
+function Ocultar2() {
+  const CarteleraButtons = document.querySelectorAll('#Cartelera button');
+  CarteleraButtons.forEach(button => {
+    button.style.display = 'none';
+  });
+}
+
+function Ocultar3() {
+  const salasButtons = document.querySelectorAll('#Salas button');
+  salasButtons.forEach(button => {
+    button.style.display = 'none';
+  });
+}
+
+function Mostrar_Pelis(Cineid) {
+  console.log(Cineid);
+  fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
+  .then(response => response.json())
+  .then(data => {
+    const peliculas = [];
+    data.forEach(element => {
+      element.showtimes.forEach(showtime => {
+        const pelicula = {
+          name: showtime.movie.name,
+          runningTime: showtime.movie.runningTime,
+          rating: showtime.movie.rating
+        };
+        peliculas.push(pelicula);
+      });
+    });
+    PelisNoRepetidas = [...new Set(peliculas.map(pelicula => JSON.stringify(pelicula)))].map(pelicula => JSON.parse(pelicula));
+    console.log(PelisNoRepetidas); // Array con objetos de películas
+    PelisNoRepetidas.forEach(pelicula => {
+      const button = document.createElement('button');
+      
+      button.textContent = `${pelicula.name} - ${pelicula.runningTime} minutos - Rating: ${pelicula.rating}`;
+      button.addEventListener('click', () => {
+        Ocultar2();
+        Mostrar_Salas(pelicula.name, Cineid);
+      });
+      CarteleraCont.appendChild(button);
+    });
+  });
+}
+
+function Mostrar_Salas2(nombre, Cineid) {
+  console.log(nombre);
+  fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
+   .then(response => response.json())
+   .then(data => {
+      const salas = {};
+      data.forEach(element => {
+        element.showtimes.forEach(showtime => {
+          if (nombre === showtime.movie.name) {
+            const salaName = element.name;
+            const hora = showtime.startTime;
+            if (!salas[salaName]) {
+              salas[salaName] = [];
+            }
+            salas[salaName].push(hora);
+          }
+        });
+      });
+
+      // Crear sección de salas
+      
+      salasCont.innerHTML = ''; // Limpiar sección de salas
+
+      // Crear botones con horas para cada sala
+      Object.keys(salas).forEach(salaName => {
+        const salaDiv = document.createElement('div');
+        salaDiv.textContent = ` ${salaName}`;
+        salasCont.appendChild(salaDiv);
+
+        const horasDiv = document.createElement('div');
+        salas[salaName].forEach(hora => {
+          const horaButton = document.createElement('button');
+          horaButton.textContent = hora;
+          horaButton.addEventListener('click', () => {
+          Ocultar3();
+        //Mostrar_butacas(salaName, hora);
+         });
+          horasDiv.appendChild(horaButton);
+        });
+        salasCont.appendChild(horasDiv);
+      });
+    });
+}
+
+function Mostrar_Salas(nombre, Cineid) {
+  console.log(nombre);
+  fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
+  .then(response => response.json())
+  .then(data => {
+      const salas = {};
+      data.forEach(element => {
+        element.showtimes.forEach((showtime, index) => {
+          if (nombre === showtime.movie.name) {
+            const salaName = element.name;
+            const hora = showtime.startTime;
+            if (!salas[salaName]) {
+              salas[salaName] = [];
+            }
+            salas[salaName].push(hora);
+            salas[salaName].push({ // Asignar objeto con datos adicionales
+              showtimeId: showtime.id,
+              auditoriumId: element.id,
+              nombrecine:Cineid,
+              nombrepeli:nombre
+            });
+          }
+        });
+      });
+
+      // Crear sección de salas
+      
+      salasCont.innerHTML = ''; // Limpiar sección de salas
+
+      // Crear botones con horas para cada sala
+      Object.keys(salas).forEach(salaName => {
+        const salaDiv = document.createElement('div');
+        salaDiv.textContent = ` ${salaName}`;
+        salasCont.appendChild(salaDiv);
+
+        const horasDiv = document.createElement('div');
+        salas[salaName].forEach((hora, index) => {
+          if (typeof hora === 'string') { // Verificar si es una hora o un objeto con datos adicionales
+            const horaButton = document.createElement('button');
+            horaButton.textContent = hora;
+            horaButton.data = salas[salaName][index + 1]; // Asignar objeto con datos adicionales
+            horaButton.addEventListener('click', event => {
+              const { showtimeId, auditoriumId, nombrecine, nombrepeli} = event.target.data;
+              Ocultar3();
+              Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli);
+            });
+            horasDiv.appendChild(horaButton);
+          }
+        });
+        salasCont.appendChild(horasDiv);
+      });
+    });
+}
+
+
+function Ocultar3() {
+    salasCont.innerHTML = ''; // Limpiar la cartelera
+}
+
+function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid,nombre) {
+    console.log(salaName, hora, showtimeId, auditoriumId, Cineid,nombre)
+
+    fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}`)
+    .then(response => response.json())
+    .then(data => {
+        console.log(data)
+    });
+}
+
 
     </script>
 </body>
