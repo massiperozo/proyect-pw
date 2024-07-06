@@ -5,6 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Butacas</title>
 </head>
+
+<style>
+
+.Pelis {
+    display: inline-block;
+    flex-direction: column; /* Cambiamos a columna */
+    align-items: center;
+    justify-content: center;
+    width: 15%;
+    margin: 10px;
+    padding: 10px;
+    background-color: #c58337; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer; /* Agregamos cursor pointer */
+    transition: background-color 0.3s; /* Agregamos transición */
+  }
+
+ .Pelis:hover {
+    background-color: #d1271b; /* Cambiamos el color al pasar el ratón */
+  }
+
+ .Pelis img {
+    margin-bottom: 5px; /* Espacio entre la imagen y el texto */
+    max-width: 100%; /* Ajusta el ancho de la imagen */
+    height: auto; /* Ajusta la altura de la imagen proporcionalmente */
+  }
+
+  .confirm-container {
+  display: none; /* Ocultar por defecto */
+  position: absolute; /* Posicionar absolutamente */
+  top: 50%; /* Centrar verticalmente */
+  left: 50%; /* Centrar horizontalmente */
+  transform: translate(-50%, -50%); /* Corregir posición */
+  background: white; /* Agregar fondo blanco */
+  padding: 20px; /* Agregar padding */
+  border: 1px solid #ccc; /* Agregar borde */
+  border-radius: 10px; /* Agregar radio de borde */
+ 
+}
+
+.confirm-container.show {
+  display: block; /* Mostrar cuando se llama a la función MostrarConfirmar */
+}
+  .seat-button {
+  width: 30px;
+  height: 30px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.seat-button.occupied {
+  background-color: #000000; /* Color para asientos ocupados */
+}
+
+.seat-button.empty {
+  
+  background-color: #B88722; /* Color para asientos vacíos */
+  color: #B88722; /* Color del texto para asientos vacíos */
+  font-size: 12px; /* Tamaño del texto para asientos vacíos */
+}
+
+#seat-container {
+ 
+  display: none;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 90vw; /* Establece la anchura del contenedor en 90% de la anchura de la pantalla */
+  max-width: 90vw; /* Establece un límite máximo de anchura de 90% de la anchura de la pantalla */
+  overflow-x: auto;
+}
+
+#Butacas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-grow: 1; 
+  max-height: 500px;
+  overflow-y: auto; 
+}
+
+.reserve-button {
+  margin-top: 1rem;
+  background-color: #3612da;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+}
+
+
+
+.reserve-button:hover {
+  background-color: #060713; /* Cambiar color al pasar el ratón */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Agregar sombra para que sobresalga */
+}
+
+
+.reserve-button2 {
+  margin-top: 1rem;
+  background-color: #da1212;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  
+}
+
+
+
+.reserve-button2:hover {
+  background-color: #060713; /* Cambiar color al pasar el ratón */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Agregar sombra para que sobresalga */
+}
+
+</style>
+
+
+
+
 <body>
     <div class="containe" id="conatainerTotal">
         <div id="cines" class="cines">  
@@ -15,9 +144,12 @@
         <div id="Salas" class="Salas">             
     </div>
 
-    <div class="containe3" id="conatainerTota3">  
-        <div id="Butacas" class="Butacas">             
+    <div id="seat-container" style="width: 1200px; height: 600px; margin: 40px auto; background-color: #B88722; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
+      <!-- Contenido de los asientos -->
+       
+      <div id="Butacas"></div>
     </div>
+    <button id="reserve-button" class="reserve-button" style="display: none;">Reservar</button>
 
     <script>
         
@@ -25,6 +157,7 @@
         const cineCont = document.getElementById('cines');
         const CarteleraCont = document.getElementById('Cartelera');
         const salasCont = document.getElementById('Salas');
+        const seatContainer = document.getElementById('Butacas');
         
 
         let PelisNoRepetidas=[];
@@ -68,6 +201,21 @@ function Ocultar3() {
   salasButtons.forEach(button => {
     button.style.display = 'none';
   });
+
+  const salaNames = document.querySelectorAll('.sala-name');
+  salaNames.forEach(salaName => {
+    salaName.style.display = 'none';
+  });
+}
+
+
+
+function Ocultar4() {
+  const buttons = document.getElementsByName(`Reservar`);
+  const buttons2 = document.getElementsByName(`Cancelar`);
+
+  buttons.forEach(button => button.style.display = 'none');
+  buttons2.forEach(button => button.style.display = 'none');
 }
 
 function Mostrar_Pelis(Cineid) {
@@ -89,64 +237,53 @@ function Mostrar_Pelis(Cineid) {
     PelisNoRepetidas = [...new Set(peliculas.map(pelicula => JSON.stringify(pelicula)))].map(pelicula => JSON.parse(pelicula));
     console.log(PelisNoRepetidas); // Array con objetos de películas
     PelisNoRepetidas.forEach(pelicula => {
-      const button = document.createElement('button');
-      
-      button.textContent = `${pelicula.name} - ${pelicula.runningTime} minutos - Rating: ${pelicula.rating}`;
-      button.addEventListener('click', () => {
-        Ocultar2();
-        Mostrar_Salas(pelicula.name, Cineid);
-      });
-      CarteleraCont.appendChild(button);
+  const button = document.createElement('button');
+  button.classList.add('Pelis'); 
+  
+
+  const img = document.createElement('img');
+  data.forEach(element => {
+    element.showtimes.forEach(showtime => {
+      if (showtime.movie.name === pelicula.name) {
+        img.src = `${urlBase}/${showtime.movie.poster}`;
+        img.alt = pelicula.name;
+        img.width = 200;
+        img.height = 200;
+        img.style.margin = '0 auto';
+      }
     });
+  });
+  
+  // Agregamos la imagen al botón
+  button.appendChild(img);
+  
+  // Creamos un elemento span para el texto
+  const textSpan = document.createElement('span');
+  textSpan.textContent = `${pelicula.name} - ${pelicula.runningTime} minutos - Rating: ${pelicula.rating}`;
+  textSpan.style.fontSize = '12px';
+  textSpan.style.color = '#333';
+  textSpan.style.textAlign = 'center';
+  
+  // Agregamos el texto al botón
+  button.appendChild(textSpan);
+  
+  // Agregamos los atributos y eventos al botón
+  button.addEventListener('click', () => {
+    Ocultar2();
+    Mostrar_Salas(pelicula.name, Cineid);
+  });
+  
+  CarteleraCont.appendChild(button);
+});
   });
 }
 
-function Mostrar_Salas2(nombre, Cineid) {
-  console.log(nombre);
-  fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
-   .then(response => response.json())
-   .then(data => {
-      const salas = {};
-      data.forEach(element => {
-        element.showtimes.forEach(showtime => {
-          if (nombre === showtime.movie.name) {
-            const salaName = element.name;
-            const hora = showtime.startTime;
-            if (!salas[salaName]) {
-              salas[salaName] = [];
-            }
-            salas[salaName].push(hora);
-          }
-        });
-      });
 
-      // Crear sección de salas
-      
-      salasCont.innerHTML = ''; // Limpiar sección de salas
-
-      // Crear botones con horas para cada sala
-      Object.keys(salas).forEach(salaName => {
-        const salaDiv = document.createElement('div');
-        salaDiv.textContent = ` ${salaName}`;
-        salasCont.appendChild(salaDiv);
-
-        const horasDiv = document.createElement('div');
-        salas[salaName].forEach(hora => {
-          const horaButton = document.createElement('button');
-          horaButton.textContent = hora;
-          horaButton.addEventListener('click', () => {
-          Ocultar3();
-        //Mostrar_butacas(salaName, hora);
-         });
-          horasDiv.appendChild(horaButton);
-        });
-        salasCont.appendChild(horasDiv);
-      });
-    });
-}
 
 function Mostrar_Salas(nombre, Cineid) {
   console.log(nombre);
+  document.getElementById('seat-container').style.visibility = 'visible';
+
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
   .then(response => response.json())
   .then(data => {
@@ -178,6 +315,7 @@ function Mostrar_Salas(nombre, Cineid) {
       Object.keys(salas).forEach(salaName => {
         const salaDiv = document.createElement('div');
         salaDiv.textContent = ` ${salaName}`;
+        salaDiv.className = 'sala-name';
         salasCont.appendChild(salaDiv);
 
         const horasDiv = document.createElement('div');
@@ -188,6 +326,7 @@ function Mostrar_Salas(nombre, Cineid) {
             horaButton.data = salas[salaName][index + 1]; // Asignar objeto con datos adicionales
             horaButton.addEventListener('click', event => {
               const { showtimeId, auditoriumId, nombrecine, nombrepeli} = event.target.data;
+              
               Ocultar3();
               Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli);
             });
@@ -200,18 +339,294 @@ function Mostrar_Salas(nombre, Cineid) {
 }
 
 
-function Ocultar3() {
-    salasCont.innerHTML = ''; // Limpiar la cartelera
+function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  console.log(salaName, hora, showtimeId, auditoriumId, Cineid, nombre)
+  suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+  document.getElementById('seat-container').style.display = 'flex';
+  // Agregar título y detalles de la película
+  const titleElement = document.createElement('h2');
+  titleElement.textContent = nombre;
+  document.getElementById('seat-container').appendChild(titleElement);
+
+  const detailsElement = document.createElement('p');
+  detailsElement.textContent = `${salaName} - Hora: ${hora}`;
+  document.getElementById('seat-container').appendChild(detailsElement);
+
+   fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}`)
+ .then(response => response.json())
+ .then(data => {
+    console.log(data)
+    let index ;
+    let index2;
+    const seatLetters = Object.keys(data.seats);
+    const seatContainer = document.getElementById('Butacas');
+    seatContainer.innerHTML = ''; // Limpiar contenedor de asientos
+
+    // Crear contenedor de filas
+    const rowContainer = document.createElement('div');
+    rowContainer.style.display = 'flex';
+    rowContainer.style.flexWrap = 'wrap';
+    seatContainer.appendChild(rowContainer);
+
+    // Iterar sobre las letras
+    seatLetters.forEach(seatLetter => {
+      index = 0;
+      index2=0;
+      const rowContainer = document.createElement('div');
+      rowContainer.style.display = 'flex';
+      rowContainer.style.flexWrap = 'wrap';
+      seatContainer.appendChild(rowContainer);
+
+      const seatArray = data.seats[seatLetter];
+      
+      seatArray.forEach(seat => {
+        const seatId = `${seatLetter}${seat}`;
+        if (seat == 0) {
+          console.log(`${seatLetter}${index}`);
+          const button = document.createElement('button');
+         
+          button.style.backgroundColor = 'green';
+          button.textContent = `${seatLetter}${index}`;
+          const asiento=`${seatLetter}${index+index2}`;
+          button.name =(`${asiento}`); 
+          
+          button.addEventListener('click', event => {
+              
+            const currentButton = event.target; // Obtienes la referencia del botón que se ha clickeado
+            const buttonColor = currentButton.style.backgroundColor;
+
+             if (buttonColor === 'green') {
+                 currentButton.style.backgroundColor = 'blue';
+                 MostrarConfirmar(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+                                          } 
+             else   {
+                 currentButton.style.backgroundColor = 'blue';
+                 MostrarCancelarReserva(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+                      } 
+              })
+          button.className = 'seat-button';
+          rowContainer.appendChild(button);
+          index++;
+        } else if (seat === 2) {
+          console.log(`${seatLetter}${index}`);
+          const button = document.createElement('button');
+          
+          const asiento=`${seatLetter}${index+index2}`;
+          button.name =(`${asiento}`);
+          button.className = 'seat-button';
+          button.style.backgroundColor = 'red';
+          button.textContent = `${seatLetter}${index}`;
+          button.addEventListener('click', event => {
+            
+              
+            const currentButton = event.target; // Obtienes la referencia del botón que se ha clickeado
+            const buttonColor = currentButton.style.backgroundColor;
+
+             if (buttonColor === 'green') {
+                 currentButton.style.backgroundColor = 'blue';
+                 MostrarConfirmar(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+                                          } 
+             else   {
+                 currentButton.style.backgroundColor = 'blue';
+                 MostrarCancelarReserva(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+                      } })
+          rowContainer.appendChild(button);
+          index++;
+        } else {
+          console.log(`${seatLetter}${index}`);
+          const button = document.createElement('button');
+          button.textContent = `A0`;
+          button.textContent = ' '; // Agregar un espacio en blanco para indicar asiento vacío
+          index2++;
+          button.className = 'seat-button empty';
+          rowContainer.appendChild(button);
+        }
+      });
+    });
+  });
 }
 
-function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid,nombre) {
-    console.log(salaName, hora, showtimeId, auditoriumId, Cineid,nombre)
+function MostrarConfirmar(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  const reserveButton = document.createElement('button');
+  reserveButton.textContent = 'Reservar';
+  reserveButton.name ='Reservar';
+  reserveButton.className = 'reserve-button'; // Agregamos la clase reserve-button
+  reserveButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
+  reserveButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
+  reserveButton.style.position = 'absolute'; // Posicionar absolutamente
+  reserveButton.style.left = '40%'; // Centrar horizontalmente
+  reserveButton.style.transform = 'translate(-50%, -50%)'; // Corregir posición
+  
+  reserveButton.addEventListener('click', () => {
+    Realiza_Reserva(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+  });
 
-    fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}`)
-    .then(response => response.json())
-    .then(data => {
-        console.log(data)
-    });
+  document.body.appendChild(reserveButton); // Agregamos el botón al body
+
+  const cancelButton = document.createElement('button');
+  cancelButton.textContent = 'Cancelar';
+  cancelButton.name ='Cancelar';
+  cancelButton.className = 'reserve-button2'; 
+  cancelButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
+  cancelButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
+  cancelButton.style.position = 'absolute'; // Posicionar absolutamente
+  cancelButton.style.left = '60%'; // Centrar horizontalmente
+  cancelButton.style.transform = 'translate(-50%, -50%)'; // Corregir posición
+ 
+
+  cancelButton.addEventListener('click', () => {
+    const button = document.getElementsByName(`${asiento}`)[0];
+    button.style.backgroundColor = 'green';
+    
+
+    // Ocultar los botones de confirmar y cancelar
+    reserveButton.style.display = 'none';
+    cancelButton.style.display = 'none';
+  });
+
+  document.body.appendChild(cancelButton); // Agregamos el botón al body
+}
+
+function MostrarCancelarReserva(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  const cancelButton = document.createElement('button');
+  cancelButton.textContent = 'Cancelar Reserva';
+  cancelButton.name ='CancelarReserva';
+  cancelButton.className = 'reserve-button2'; 
+  cancelButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
+  cancelButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
+  cancelButton.style.position = 'absolute'; // Posicionar absolutamente
+  cancelButton.style.left = '40%'; // Centrar horizontalmente
+  cancelButton.style.transform = 'translate(-50%, -50%)'; // Corregir posición
+  
+  cancelButton.addEventListener('click', () => {
+    Cancelar_Reserva(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+    const button = document.getElementsByName(`${asiento}`)[0];
+    button.style.backgroundColor = 'green';
+    cancelButton.style.display = 'none';
+    reserveButton.style.display = 'none';
+  });
+
+  document.body.appendChild(cancelButton); // Agregamos el botón al body
+
+
+  const reserveButton = document.createElement('button');
+  reserveButton.textContent = 'No Canceelar';
+  reserveButton.name ='Reservar';
+  reserveButton.className = 'reserve-button'; // Agregamos la clase reserve-button
+  reserveButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
+  reserveButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
+  reserveButton.style.position = 'absolute'; // Posicionar absolutamente
+  reserveButton.style.left = '60%'; // Centrar horizontalmente
+  reserveButton.style.transform = 'translate(-50%, -50%)'; // Corregir posición
+  
+  reserveButton.addEventListener('click', () => {
+    reserveButton.style.display = 'none';
+    cancelButton.style.display = 'none';
+  });
+
+  document.body.appendChild(reserveButton); // Agregamos el botón al body
+}
+
+
+ 
+
+function Cancelar_Reserva(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reserve`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ seat: asiento })
+  })
+ .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(response.statusText);
+    }
+  })
+ .then(data => {
+    console.log(`Asiento liberado exitosamente, Asiento Liberado:${asiento}`);
+    const button = document.getElementsByName(`${asiento}`)[0];
+    button.style.backgroundColor = 'green';
+  })
+ .catch(error => {
+    if (error.status === 400) {
+      console.error(`El asiento o butaca a liberar no ha sido proporcionado.`);
+    } else if (error.status === 409) {
+      console.error(`El asiento o butaca a liberar no se encuentra ocupado, Asiento usado:${asiento}`);
+    } else {
+      console.error(`Error desconocido: ${error}`);
+    }
+  });
+}
+
+ function Realiza_Reserva(asiento,salaName, hora, showtimeId, auditoriumId, Cineid, nombre){
+  Ocultar4();
+  console.log(`${asiento}`)
+  fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reserve`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ seat: asiento })
+})
+.then(response => {
+  if (response.ok) {
+    return response.json();
+  } else {
+    throw new Error(response.statusText);
+  }
+})
+.then(data => {
+  console.log(`Asiento reservado exitosamente, Asiento Reservado:${asiento}`);
+  const button = document.getElementsByName(`${asiento}`)[0];
+  button.style.backgroundColor = 'red';
+  Ocultar4();
+
+
+})
+.catch(error => {
+  if (error.status === 400) {
+    console.error(`El asiento o butaca a reservar no ha sido proporcionado.`);
+  } else if (error.status === 409) {
+    console.error(`El asiento o butaca a reservar ya se encuentra ocupado, Asiento usado:${asiento}`);
+  } else {
+    console.error(`Error desconocido: ${error}`);
+  }
+});
+
+ }
+
+ function suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  const eventSource = new EventSource(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reservation-updates`);
+
+  eventSource.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    console.log(`Received update: ${data.message}`);
+    // Procesar la actualización aquí
+    if (data.result === 'SEAT_RESERVED') {
+      // Mostrar que el asiento ha sido reservado
+      const button = document.getElementsByName(`${data.seat}`)[0];
+      button.style.backgroundColor = 'red';
+    } else if (data.result === 'SEAT_RELEASED') {
+      // Mostrar que el asiento ha sido liberado
+      const button = document.getElementsByName(`${data.seat}`)[0];
+      button.style.backgroundColor = 'green';
+    }
+  };
+
+  eventSource.onopen = () => {
+    console.log('Connected to the server');
+  };
+
+  eventSource.onerror = (event) => {
+    console.error('Error occurred:', event);
+  };
+
+  eventSource.onclose = () => {
+    console.log('Connection closed');
+  };
 }
 
 
