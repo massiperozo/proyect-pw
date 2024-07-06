@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Butacas</title>
+    <title>CinexUnidos - Venezuela</title>
 </head>
 
 <style>
@@ -447,6 +447,7 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
 }
 
 function MostrarConfirmar(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  const selectedSeats = [] // para que nos permita seleccionar varios asientos
   const reserveButton = document.createElement('button');
   reserveButton.textContent = 'Reservar';
   reserveButton.name ='Reservar';
@@ -512,6 +513,7 @@ function MostrarCancelarReserva(asiento, salaName, hora, showtimeId, auditoriumI
   const reserveButton = document.createElement('button');
   reserveButton.textContent = 'No Canceelar';
   reserveButton.name ='Reservar';
+  reserveButton.id ='Reservar';
   reserveButton.className = 'reserve-button'; // Agregamos la clase reserve-button
   reserveButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
   reserveButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
@@ -530,13 +532,13 @@ function MostrarCancelarReserva(asiento, salaName, hora, showtimeId, auditoriumI
 
  
 
-function Cancelar_Reserva(asiento, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+function Cancelar_Reserva(selectedSeats, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reserve`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ seat: asiento })
+    body: JSON.stringify({ seat: selectedSeats })
   })
  .then(response => {
     if (response.ok) {
@@ -561,15 +563,15 @@ function Cancelar_Reserva(asiento, salaName, hora, showtimeId, auditoriumId, Cin
   });
 }
 
- function Realiza_Reserva(asiento,salaName, hora, showtimeId, auditoriumId, Cineid, nombre){
+ function Realiza_Reserva(selectedSeats,salaName, hora, showtimeId, auditoriumId, Cineid, nombre){
   Ocultar4();
-  console.log(`${asiento}`)
+  console.log(`${selectedSeats}`)
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reserve`, {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ seat: asiento })
+  body: JSON.stringify({ seat: selectedSeats })
 })
 .then(response => {
   if (response.ok) {
@@ -579,18 +581,19 @@ function Cancelar_Reserva(asiento, salaName, hora, showtimeId, auditoriumId, Cin
   }
 })
 .then(data => {
-  console.log(`Asiento reservado exitosamente, Asiento Reservado:${asiento}`);
-  const button = document.getElementsByName(`${asiento}`)[0];
+  console.log(`Asiento reservado exitosamente, Asiento Reservado:${selectedSeats}`);
+  const button = document.getElementsByName(`${selectedSeats}`)[0];
   button.style.backgroundColor = 'red';
+  //Llama a la funcion de mostrar el resumen de la reserva
+  const asientosSeleccionados = document.getElementsByName('Reservar');
+  mostrarResumenDeReserva(asientosSeleccionados,salaName,hora,showtimeId,auditoriumId,Cineid,nombre);
   Ocultar4();
-
-
 })
 .catch(error => {
   if (error.status === 400) {
     console.error(`El asiento o butaca a reservar no ha sido proporcionado.`);
   } else if (error.status === 409) {
-    console.error(`El asiento o butaca a reservar ya se encuentra ocupado, Asiento usado:${asiento}`);
+    console.error(`El asiento o butaca a reservar ya se encuentra ocupado, Asiento usado:${selectedSeats}`);
   } else {
     console.error(`Error desconocido: ${error}`);
   }
@@ -629,6 +632,50 @@ function Cancelar_Reserva(asiento, salaName, hora, showtimeId, auditoriumId, Cin
   };
 }
 
+//Va a mostrar las butacas seleccionadas refelajadas como tickets y una seccion de chucherias
+function mostrarResumenDeReserva(selectedSeats, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  // Muestra la cantidad de butacas seleccionadas
+  const numAsientos = selectedSeats.length;
+  const resumenAsientos = document.createElement('p');
+  resumenAsientos.textContent = `Has seleccionado ${numAsientos} butacas para la función de ${nombre} en la sala ${salaName} a las ${hora}.`;
+  document.body.appendChild(resumenAsientos);
+
+  // Mostrar selección de chucherías
+  const chucherias = [
+    { nombre: 'Palomitas', precio: 5 },
+    { nombre: 'Refresco', precio: 3 },
+    { nombre: 'Chocolate', precio: 4 },
+    { nombre: 'Nachos', precio: 6 }
+  ];
+  console.log(chucherias);
+
+  const seleccionChucherias = document.createElement('div');
+  seleccionChucherias.innerHTML = '<h2>Seleccione sus chucherías</h2>';
+  chucherias.forEach(chucheria => {
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.name = chucheria.nombre;
+    checkbox.value = chucheria.precio;
+
+    const label = document.createElement('label');
+    label.textContent = chucheria.nombre;
+    label.appendChild(checkbox);
+
+    seleccionChucherias.appendChild(label);
+  });
+
+  document.body.appendChild(seleccionChucherias);
+
+  // Agregar un botón para finalizar la compra
+  const finalizarCompra = document.createElement('button');
+  finalizarCompra.textContent = 'Finalizar compra';
+  finalizarCompra.addEventListener('click', () => {
+    // Procesar la compra aquí
+    console.log('Compra finalizada');
+  });
+
+  document.body.appendChild(finalizarCompra);
+}
 
     </script>
 </body>
