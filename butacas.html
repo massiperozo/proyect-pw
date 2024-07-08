@@ -8,6 +8,37 @@
 
 <style>
 
+/* Estilos generales */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  color: #212121;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+}
+
+p {
+  margin-bottom: 20px;
+}
+
+
 .cine-cont {
   display:flexbox;
   justify-content: center;
@@ -60,7 +91,7 @@
   padding: 10px 20px;
   border: none;
   border-radius: 10px;
-  background-color: #46b5e9;
+  background-color: #1485b9;
   cursor: pointer;
   transition: background-color 0.3s ease;
   margin-bottom: 20px; /* Agregamos espacio entre los elementos */
@@ -72,7 +103,7 @@
 }
 
 .centro-comercial:hover {
-  background-color: #d32b63;
+  background-color: #0f4583;
 }
 
 .centro-comercial img {
@@ -219,21 +250,59 @@
 }
 
 
-
 .reserve-button2:hover {
   background-color: #060713; /* Cambiar color al pasar el ratón */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Agregar sombra para que sobresalga */
 }
 
+#menu {
+  background-color: #333;
+  padding: 10px;
+}
+#menu ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-around;
+}
+#menu ul li {
+  margin: 0 10px;
+}
+#menu ul li a {
+  color: #fff;
+  text-decoration: none;
+  padding: 5px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+#menu ul li a:hover{
+  background-color: #555;
+}
 
 
 </style>
 
 
-
-
 <body>
     
+<nav id="menu">
+      <ul>
+        <li><a id="inicio" href="">Inicio</a></li>
+        <li><a id="Contacto" href="">Contacto</a></li>
+      </ul>
+    </nav>
+
+  <div>
+    <h1 id="bienvenida">Bievenidos a CINEXUNIDOS - VENEZUELA</h1>
+    <h2 id="cine">CINES</h2>
+
+    
+
+    <h2 id="cartelera" style="display: none">CARTELERA</h2>
+    <h2 id="salas" style="display: none">SALAS</h2>
+    
+  </div>
       
       <div class="cine-cont" >
         <div id="cines" class="cines">
@@ -254,6 +323,8 @@
       <div id="Butacas"></div>
     </div>
     <button id="reserve-button" class="reserve-button" style="display: none;">Reservar</button>
+
+    
 
     <script>
         
@@ -306,6 +377,7 @@
       centroComercial.addEventListener('click', () => {
         Mostrar_Pelis(element.id);
         Ocultar();
+        OcultarTitulo();
       });
 
       cines.appendChild(centroComercial);
@@ -351,8 +423,27 @@ function Ocultar4() {
   buttons2.forEach(button => button.style.display = 'none');
 }
 
+
+  function OcultarTitulo() {
+    const tituloBienvenida = document.getElementById('bienvenida');
+    const tituloCine = document.getElementById('cine');
+    tituloBienvenida.style.display = 'none';
+    tituloCine.style.display = 'none';
+  }
+
+  function ApareceCartelera(){
+    const carteleraTitle = document.getElementById('cartelera'); 
+    carteleraTitle.style.display = 'block';
+  }
+  function ApareceSalas(){
+    const salasTitle = document.getElementById('salas'); 
+    salasTitle.style.display = 'block';
+  }
+
+
 function Mostrar_Pelis(Cineid) {
   console.log(Cineid);
+  ApareceCartelera();
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
   .then(response => response.json())
   .then(data => {
@@ -415,6 +506,9 @@ function Mostrar_Pelis(Cineid) {
 
 function Mostrar_Salas(nombre, Cineid) {
   console.log(nombre);
+  ApareceSalas(); 
+    const cartelera = document.getElementById("cartelera");
+    cartelera.style.display = 'none';
   document.getElementById('seat-container').style.visibility = 'visible';
 
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
@@ -473,6 +567,8 @@ function Mostrar_Salas(nombre, Cineid) {
 
 
 function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  const salas = document.getElementById("salas");
+    salas.style.display = 'none';
   console.log(salaName, hora, showtimeId, auditoriumId, Cineid, nombre)
   suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
   document.getElementById('seat-container').style.display = 'flex';
@@ -856,12 +952,15 @@ function mostrarResumenDeReserva(selectedSeats, salaName, hora, showtimeId, audi
   document.body.appendChild(finalizarCompra);
 }
 
+function ComprobarExistenciaArray(asiento, Array){}
 
+function inicio(){
+  const inicio = document.getElementById("inicio");
+  inicio.addEventListener('click', () => {
+    location.reload();
+  });
+};
 
-function ComprobarExistenciaArray(asiento, Array){
- 
-
-}
 
     </script>
 </body>
