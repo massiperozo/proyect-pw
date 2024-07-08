@@ -139,7 +139,7 @@ p {
   width: 15%;
   margin: 10px;
   padding: 10px;
-  background-color: #c58337;
+  background-color: #1485b9;
   color: white;
   border: none;
   border-radius: 5px;
@@ -150,7 +150,7 @@ p {
 }
 
 .Pelis:hover {
-    background-color: #d1271b; /* Cambiamos el color al pasar el ratón */
+    background-color: #0f4583; /* Cambiamos el color al pasar el ratón */
   }
 
 .Pelis img {
@@ -227,6 +227,7 @@ p {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  top: 900px;
   
 }
 
@@ -246,6 +247,7 @@ p {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  top: 900px;
   
 }
 
@@ -321,8 +323,9 @@ p {
       <!-- Contenido de los asientos -->
        
       <div id="Butacas"></div>
+      <button id="reserve-button" class="reserve-button" style="display: none;">Reservar</button>
     </div>
-    <button id="reserve-button" class="reserve-button" style="display: none;">Reservar</button>
+   
 
     
 
@@ -338,6 +341,7 @@ p {
         let PelisNoRepetidas=[];
         let Salas=[];
         let horas=[];
+       
 
 
 
@@ -353,20 +357,8 @@ p {
       nombreCC.textContent = element.name;
       centroComercial.appendChild(nombreCC);
 
-      let imagenSrc;
-      switch (element.name) {
-        case 'Sambil Chacao':
-          imagenSrc = 'https://oceandrive.com.ve/wp-content/uploads/2023/01/Sambil.png';
-          break;
-        case 'Sambil La Candelaria':
-          imagenSrc = 'https://mmedia.eluniversal.com/19326/sambil-la-candelaria-116035.jpg';
-          break;
-        case 'Tolón Fashion Mall':
-          imagenSrc = 'https://ceovenezuela.com/wp-content/uploads/2021/12/CEOVenezuela-El-Tolon-Fashion-Mall-celebra-incorporacion-de-26-nuevos-aliados-comerciales-FOTO-800x445.jpg';
-          break;
-        default:
-          imagenSrc = 'https://static3.depositphotos.com/1009701/256/i/450/depositphotos_2561504-stock-photo-new-strip-mall.jpg';
-      }
+      let imagenSrc= `${urlBase}/${element.images[0]}`;
+
 
       const imagenCC = document.createElement('img');
       imagenCC.src = imagenSrc;
@@ -375,7 +367,7 @@ p {
       centroComercial.appendChild(imagenCC);
 
       centroComercial.addEventListener('click', () => {
-        Mostrar_Pelis(element.id);
+        Mostrar_Pelis(element.id, element.name);
         Ocultar();
         OcultarTitulo();
       });
@@ -441,7 +433,7 @@ function Ocultar4() {
   }
 
 
-function Mostrar_Pelis(Cineid) {
+function Mostrar_Pelis(Cineid,cinenombre) {
   console.log(Cineid);
   ApareceCartelera();
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
@@ -494,7 +486,7 @@ function Mostrar_Pelis(Cineid) {
   // Agregamos los atributos y eventos al botón
   button.addEventListener('click', () => {
     Ocultar2();
-    Mostrar_Salas(pelicula.name, Cineid);
+    Mostrar_Salas(pelicula.name, Cineid,cinenombre);
   });
   
   CarteleraCont.appendChild(button);
@@ -504,7 +496,7 @@ function Mostrar_Pelis(Cineid) {
 
 
 
-function Mostrar_Salas(nombre, Cineid) {
+function Mostrar_Salas(nombre, Cineid,cinenombre) {
   console.log(nombre);
   ApareceSalas(); 
     const cartelera = document.getElementById("cartelera");
@@ -555,7 +547,7 @@ function Mostrar_Salas(nombre, Cineid) {
               const { showtimeId, auditoriumId, nombrecine, nombrepeli} = event.target.data;
               
               Ocultar3();
-              Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli);
+              Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli,cinenombre);
             });
             horasDiv.appendChild(horaButton);
           }
@@ -566,7 +558,7 @@ function Mostrar_Salas(nombre, Cineid) {
 }
 
 
-function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre) {
   const salas = document.getElementById("salas");
     salas.style.display = 'none';
   console.log(salaName, hora, showtimeId, auditoriumId, Cineid, nombre)
@@ -627,7 +619,7 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
              if (buttonColor === 'green') {if (!selectedSeatsCancel || selectedSeatsCancel.length === 0){
                  currentButton.style.backgroundColor = 'blue';
                  if (!selectedSeats || selectedSeats.length === 0) {
-                  MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+                  MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre);
                   selectedSeats.push(asiento);
                  } else {
                    selectedSeats.push(asiento); 
@@ -669,7 +661,7 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
               if (!selectedSeatsCancel || selectedSeatsCancel.length === 0){
                  currentButton.style.backgroundColor = 'blue';
                  if (!selectedSeats || selectedSeats.length === 0) {
-                  MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+                  MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre);
                   selectedSeats.push(asiento);
                  } else {
                    selectedSeats.push(asiento); 
@@ -704,8 +696,8 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
   });
 }
 
-function MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
-  
+function MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre) {
+ 
   const reserveButton = document.createElement('button');
   reserveButton.textContent = 'Reservar';
   reserveButton.name ='Reservar';
@@ -717,7 +709,9 @@ function MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
   reserveButton.style.transform = 'translate(-50%, -50%)'; // Corregir posición
   
   reserveButton.addEventListener('click', () => {
-    Realiza_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
+    Realiza_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre);
+    
+    
     selectedSeats.length = 0;
   });
 
@@ -833,9 +827,14 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
   });
 }
 
- function Realiza_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre){
+ function Realiza_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre){
   Ocultar4();
   console.log(`${selectedSeats}`)
+  const totalSeats = selectedSeats.length;
+  let currentSeat = 0;
+  let Prob = [];
+  console.log(Prob);
+  console.log(Prob);
   selectedSeats.forEach(seat2 => {
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reserve`, {
   method: 'POST',
@@ -851,14 +850,22 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
     throw new Error(response.statusText);
   }
 })
-.then(data => {
+.then(data => {  Prob.push(seat2);
   console.log(`Asiento reservado exitosamente, Asiento Reservado:${seat2 }`);
   const button = document.getElementsByName(`${seat2}`)[0];
+  
+ 
   button.style.backgroundColor = 'red';
   //Llama a la funcion de mostrar el resumen de la reserva
   const asientosSeleccionados = document.getElementsByName('Reservar');
   //mostrarResumenDeReserva(seat2,salaName,hora,showtimeId,auditoriumId,Cineid,nombre);
   Ocultar4();
+  currentSeat++;
+
+  if (currentSeat === totalSeats) {
+    console.log(Prob);
+        resumenReserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,Prob,cinenombre);
+      }
 })
 .catch(error => {
   if (error.status === 400) {
@@ -872,7 +879,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
 });
  }
 
- function suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+ function suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,) {
   const eventSource = new EventSource(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reservation-updates`);
 
   eventSource.onmessage = (event) => {
@@ -908,7 +915,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
 
 
 //Va a mostrar las butacas seleccionadas refelajadas como tickets y una seccion de chucherias
-function mostrarResumenDeReserva(selectedSeats, salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+function mostrarResumenDeReserva(selectedSeats, salaName, hora, showtimeId, auditoriumId, Cineid, nombre,) {
   // Muestra la cantidad de butacas seleccionadas
   const numAsientos = selectedSeats.length;
   const resumenAsientos = document.createElement('p');
@@ -952,7 +959,62 @@ function mostrarResumenDeReserva(selectedSeats, salaName, hora, showtimeId, audi
   document.body.appendChild(finalizarCompra);
 }
 
-function ComprobarExistenciaArray(asiento, Array){}
+function resumenReserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,Prob,cinenombre) {
+  // Ocultar botones y divs
+  const seatContainer = document.getElementById('seat-container');
+  if (seatContainer) {
+  seatContainer.remove();
+}
+
+const butacas = document.getElementById('Butacas');
+if (butacas) {
+  butacas.remove();
+}
+
+const reserveButton = document.querySelector('.reserve-button');
+if (reserveButton) {
+  reserveButton.remove();
+}
+
+const reserveButton2 = document.querySelector('.reserve-button2');
+if (reserveButton2) {
+  reserveButton2.remove();
+}
+
+const noCancelButton = document.getElementById('noCancelButton');
+if (noCancelButton) {
+  noCancelButton.remove();
+}
+
+  // Mostrar resumen de la reserva
+  const resumenContainer = document.createElement('div');
+  resumenContainer.style.display = 'flex';
+  resumenContainer.style.flexDirection = 'column';
+  resumenContainer.style.alignItems = 'center';
+  resumenContainer.style.justifyContent = 'center';
+  resumenContainer.style.alignContent = 'center';
+  resumenContainer.style.position = 'absolute';
+resumenContainer.style.top = '50%';
+resumenContainer.style.left = '50%';
+resumenContainer.style.transform = 'translate(-50%, -50%)';
+  
+  const titleElement = document.createElement('h2');
+  titleElement.textContent = `Reserva en ${salaName} - Hora: ${hora} - Nombre del cine: ${cinenombre}`;
+  resumenContainer.appendChild(titleElement);
+
+  const detailsElement = document.createElement('p');
+  
+  detailsElement.innerHTML = `<b>Nombre de la pelicula: <span style="color: #2F4F7F">${nombre}</span></b>`;
+  resumenContainer.appendChild(detailsElement);
+
+  let asientos=Prob.join(', ');
+  
+  const asientosElement = document.createElement('p');
+  asientosElement.innerHTML = `Asientos seleccionados: <b>${asientos}</b>`;
+  resumenContainer.appendChild(asientosElement);
+
+  document.body.appendChild(resumenContainer);
+}
 
 function inicio(){
   const inicio = document.getElementById("inicio");
