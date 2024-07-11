@@ -17,21 +17,18 @@
 }
 
 body {
-  background-color: #f5f5f5;
+  background-color: #0D0037;
   font-size: 16px;
   line-height: 1.5;
   color: #333;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
-  color: #212121;
-  margin-bottom: 10px;
+  font-family: 'Roboto';
+  color: #fff;
   display: flex;
   justify-content: center;
-  align-items: center;
   text-align: center;
-
 }
 
 p {
@@ -88,41 +85,30 @@ p {
 .centro-comercial {
   display: flex;
   flex-direction: column; /* Cambiamos a columna */
-  padding: 10px 20px;
   border: none;
-  border-radius: 10px;
-  background-color: #1485b9;
+  background-color: #241063;
+  color: #fff;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-bottom: 20px; /* Agregamos espacio entre los elementos */
   width: 250px; /* Establece el ancho del elemento */
   height: 250px; /* Establece el alto del elemento */
-   
-  justify-content: center; /* Centramos el contenido horizontalmente */
-  align-items: center; /* Centramos el contenido verticalmente */
+  align-items: center;
 }
 
 .centro-comercial:hover {
-  background-color: #0f4583;
+  transform: scale(1.2);
+  background-color: #002060;
 }
 
 .centro-comercial img {
-  width: 100px; /* Ajusta el ancho de la imagen */
-  height: 100px; /* Ajusta el alto de la imagen */
-  margin-top: 20px; /* Agrega espacio entre la imagen y el texto */
-  margin-bottom: 10px; /* Agrega espacio entre la imagen y el texto */
-  transition: transform 0.3s ease;
-}
-
-.centro-comercial:hover img {
-  transform: scale(1.2);
+  width: 100%; /* Ajusta el ancho de la imagen */
+  height: 200px; /* Ajusta el alto de la imagen */
 }
 
 .nombre-cc {
   font-size: 18px;
   font-weight: bold;
-  margin-bottom: 10px;
-  text-align: center; /* Centramos el texto */
+  padding: 20px;
 }
 
 #Cartelera {
@@ -278,10 +264,35 @@ p {
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
-#menu ul li a:hover{
-  background-color: #555;
+#menu{
+  background-color: #002060;
 }
 
+#abajo{
+  background-color: #002060;
+  width: 100%;
+  height: 30px;
+  position: fixed;
+  bottom: 0;
+}
+#contiene-bienvenida{
+  background-color: #241063;
+  padding-top: 10px;
+  align-items: center;
+  width: 100%;
+  height: 100px;
+  margin-top: 20px;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url(fuentes/Roboto-bold.ttf);
+}
+h1{
+  font-size: 50px;
+}
+h2{
+  padding-top: 30px;
+}
 
 </style>
 
@@ -291,20 +302,24 @@ p {
 <nav id="menu">
       <ul>
         <li><a id="inicio" href="">Inicio</a></li>
+        <li><a id="Carameleria" href="">Carameleria</a></li>
         <li><a id="Contacto" href="">Contacto</a></li>
       </ul>
     </nav>
 
-  <div>
-    <h1 id="bienvenida">Bievenidos a CINEXUNIDOS - VENEZUELA</h1>
+<footer id="abajo"></footer>
+
+<div>
+    <div id="contiene-bienvenida">
+      <h1 id="bienvenida">BIENVENIDOS A CINEX</h1>
+    </div>
     <h2 id="cine">CINES</h2>
 
-    
 
     <h2 id="cartelera" style="display: none">CARTELERA</h2>
     <h2 id="salas" style="display: none">SALAS</h2>
     
-  </div>
+</div>
       
       <div class="cine-cont" >
         <div id="cines" class="cines">
@@ -325,7 +340,7 @@ p {
       <div id="Butacas"></div>
       <button id="reserve-button" class="reserve-button" style="display: none;">Reservar</button>
     </div>
-   
+    
 
     
 
@@ -352,11 +367,6 @@ p {
       const centroComercial = document.createElement('button');
       centroComercial.className = 'centro-comercial';
 
-      const nombreCC = document.createElement('span');
-      nombreCC.className = 'nombre-cc';
-      nombreCC.textContent = element.name;
-      centroComercial.appendChild(nombreCC);
-
       let imagenSrc= `${urlBase}/${element.images[0]}`;
 
 
@@ -365,6 +375,11 @@ p {
       imagenCC.width = 20; // ajusta el ancho de la imagen según sea necesario
       imagenCC.height = 20; // ajusta el alto de la imagen según sea necesario
       centroComercial.appendChild(imagenCC);
+
+      const nombreCC = document.createElement('span');
+      nombreCC.className = 'nombre-cc';
+      nombreCC.textContent = element.name;
+      centroComercial.appendChild(nombreCC);
 
       centroComercial.addEventListener('click', () => {
         Mostrar_Pelis(element.id, element.name);
@@ -385,7 +400,7 @@ function Ocultar() {
   cineCont.style.display = 'none';
 }
 
-
+//Ocultar botones de peliculas
 function Ocultar2() {
   const CarteleraButtons = document.querySelectorAll('#Cartelera button');
   CarteleraButtons.forEach(button => {
@@ -393,6 +408,7 @@ function Ocultar2() {
   });
 }
 
+//Ocultar botones de horarios
 function Ocultar3() {
   const salasButtons = document.querySelectorAll('#Salas button');
   salasButtons.forEach(button => {
@@ -406,7 +422,7 @@ function Ocultar3() {
 }
 
 
-
+//Ocultar botones de Reservar y Cancelar
 function Ocultar4() {
   const buttons = document.getElementsByName(`Reservar`);
   const buttons2 = document.getElementsByName(`Cancelar`);
@@ -417,7 +433,7 @@ function Ocultar4() {
 
 
   function OcultarTitulo() {
-    const tituloBienvenida = document.getElementById('bienvenida');
+    const tituloBienvenida = document.getElementById('contiene-bienvenida');
     const tituloCine = document.getElementById('cine');
     tituloBienvenida.style.display = 'none';
     tituloCine.style.display = 'none';
@@ -494,9 +510,7 @@ function Mostrar_Pelis(Cineid,cinenombre) {
   });
 }
 
-
-
-function Mostrar_Salas(nombre, Cineid,cinenombre) {
+function Mostrar_Salas(nombre, Cineid, cinenombre) {
   console.log(nombre);
   ApareceSalas(); 
     const cartelera = document.getElementById("cartelera");
