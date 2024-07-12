@@ -294,6 +294,49 @@ h2{
   padding-top: 30px;
 }
 
+
+/* Estilos para asegurar que el formulario sea flexible y responsive */
+.form-nombre {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%; /* Asegura que no sea más ancho que el 90% de la pantalla */
+        max-width: 400px; /* Un ancho máximo para cuando la pantalla es grande */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Un poco de sombra para estilo */
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: white; /* Fondo blanco para el formulario */
+        border-radius: 30px; /* Aumenta el radio del borde para un efecto más ovalado */ 
+        background-color: #241063;
+        
+    }
+
+    .form-nombre input[type="text"] {
+        width: 100%; /* Hace que el input ocupe todo el ancho del formulario */
+        margin-bottom: 20px; /* Espacio entre el input y el botón */
+        padding: 10px; /* Hace que el input sea más grande y fácil de interactuar */
+        box-sizing: border-box;
+        border-radius: 20px; /* Aumenta el radio del borde para un efecto más ovalado */
+        background-color: #8274af;
+        color: #000000; /* Cambia el color del texto a blanco */
+    }
+
+    .form-nombre button {
+        padding: 10px 20px; /* Hace que el botón sea más grande y fácil de interactuar */
+        border-radius: 20px; /* Aumenta el radio del borde para un efecto más ovalado */
+        background-color: #8274af;
+    }
+
+    .form-nombre input[type="text"]::placeholder {
+    color: #000000; /* Cambia el color del texto del placeholder */
+    opacity: 1; /* Asegura que el color del placeholder sea completamente opaco */
+}
+
 </style>
 
 
@@ -1052,10 +1095,57 @@ function inicio(){
 document.addEventListener('DOMContentLoaded', function() {
     var enlaceContacto = document.getElementById('Contacto');
     enlaceContacto.addEventListener('click', function(event) {
-        event.preventDefault(); // Esto previene la recarga de la página
-        // Aquí puedes ejecutar cualquier código o función que desees
-        // Por ejemplo, mostrar un modal de contacto, cambiar el contenido visible, etc.
+        event.preventDefault(); 
+        // Ocultar todos los elementos excepto el botón de contacto y de inicio
+        ocultarElementos();
+        // Mostrar el formulario para ingresar el nombre si no está ya visible
+        mostrarFormularioNombre();
         console.log('Sección de contacto activada');
+    });
+});
+
+function ocultarElementos() {
+    // Aquí debes agregar el código para ocultar todos los elementos
+    // excepto el botón de contacto y el botón de inicio.
+    // Por ejemplo:
+    document.querySelectorAll('body > *:not(nav)').forEach(function(element) {
+        element.style.display = 'none';
+    });
+}
+
+function mostrarFormularioNombre() {
+    // Verificar si el formulario ya existe para evitar duplicados
+    if (!document.querySelector('.form-nombre')) {
+        // Crear y mostrar el nuevo formulario para ingresar el nombre
+        const formNombre = document.createElement('form');
+        formNombre.classList.add('form-nombre');
+        formNombre.innerHTML = `
+            <input placeholder="Tu nombre" type="text" />
+            <button type="submit">Enviar</button>
+        `;
+        formNombre.style.position = 'fixed';
+        formNombre.style.top = '50%';
+        formNombre.style.left = '50%';
+        formNombre.style.transform = 'translate(-50%, -50%)';
+        formNombre.onsubmit = function(e) {
+            e.preventDefault();
+            const name = this.querySelector('input').value;
+            if (name) {
+                localStorage.setItem('name', name);
+                // Aquí puedes redirigir al usuario o hacer algo con el nombre
+                console.log('Nombre guardado:', name);
+            }
+        };
+        document.body.appendChild(formNombre);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var enlaceContacto = document.getElementById('Carameleria');
+    enlaceContacto.addEventListener('click', function(event) {
+        event.preventDefault(); 
+        
+        console.log('Sección de Carameleria activada');
     });
 });
 
