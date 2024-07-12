@@ -357,9 +357,14 @@ h2{
     }
 
     .bottom-right {
+    display: flex;
     position: absolute;
     bottom: 0;
     right: 100px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #391b99; /* Fondo azul oscuro */
+   border-radius: 0; /* Eliminado para que no tenga bordes redondeados */
 }
 
 .pic {
@@ -370,9 +375,126 @@ h2{
     border-radius: 50%;
 }
 #chat {
+  display: flex;
   overflow-y: auto;
   max-height: 300px; /* adjust the height to your liking */
   height: 300px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #241063; /* Fondo azul oscuro */
+  border-radius: 0; /* Eliminado para que no tenga bordes redondeados */
+}
+
+.chat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24rem;
+    height: 38rem;
+    z-index: 2;
+    box-sizing: border-box;
+    border-radius: 1rem;
+    background: white;
+    box-shadow:
+        0 0 8rem 0 rgba(0, 0, 0, 0.1),
+}
+
+.outgoing {
+  background-color: #fff; /* Color blanco */
+  color: #333; /* Color del texto */
+  border-radius: 1.125rem 1.125rem 0 1.125rem; /* Igual que.incoming */
+  margin: 1rem 1rem 1rem auto; /* Igual que.incoming */
+}
+
+.message, .outgoing {
+  word-break: break-word;
+}
+
+.message, .incoming {
+  word-break: break-word;
+}
+
+
+
+.chat .contact.bar {
+    flex-basis: 3.5rem;
+    flex-shrink: 0;
+    margin: 1rem;
+    box-sizing: border-box;
+}
+
+.chat .messages {
+    padding: 1rem;
+    background: #f7f7f7;
+    flex-shrink: 2;
+    overflow-y: auto;
+    min-height: 420px;
+    flex-grow: 1;
+   
+    box-shadow:
+        inset 0 2rem 2rem -2rem rgba(0, 0, 0, 0.05),
+        inset 0 -2rem 2rem -2rem rgba(0, 0, 0, 0.05);
+}
+
+.chat .messages .message.incoming {
+    margin: 1rem 1rem 1rem auto;
+    border-radius: 1.125rem 1.125rem 0 1.125rem;
+    background: #333;
+    color: white;
+}
+.hidden {
+  display: none;
+}
+#status-online {
+    color: green;
+}
+#status-offline {
+    color: red;
+}
+
+.chat .input {
+ 
+  margin-bottom: 0;
+  padding-bottom: 1rem; /* ajusta este valor según sea necesario */
+  margin-top: auto;
+    box-sizing: border-box;
+    flex-basis: 4rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem 0 1.5rem;
+}
+
+.chat .input i {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color: #666;
+    cursor: pointer;
+    transition: color 200ms;
+}
+.chat .input i:hover {
+    color: #333;
+}
+.chat .input input {
+   margin-bottom: 8%;
+    padding-bottom: 1rem; /* ajusta este valor según sea necesario */
+     margin-top: auto;
+    border: none;
+    background-image: none;
+    background-color: #241063;
+    padding: 0.5rem 1rem;
+    margin-right: 1rem;
+    border-radius: 1.125rem;
+    flex-grow: 2;
+    box-shadow:
+        0 0 1rem rgba(0, 0, 0, 0.1),
+        0rem 1rem 1rem -1rem rgba(0, 0, 0, 0.2);
+    font-family:
+        Red hat Display,
+        sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.025em;
 }
 </style>
 
@@ -415,15 +537,13 @@ h2{
 
         <!-- Burbujas mientras escribe -->
         <div class="message" style="display: none;" id="message">
-          <div class="typing typing-1"></div>
-          <div class="typing typing-2"></div>
-          <div class="typing typing-3"></div>
+          
         </div>
       </div>
 
       <!-- Inputs y Forms -->
       <form class="input" id="form">
-        <input placeholder="Escribe tu mensaje aquí" type="text" id="input"/>
+        <input placeholder="Escribe tu mensaje aquí y presione enter" type="text" id="input" style="color: #8274af;"/>
         <i class="fas fa-paper-plane"></i>
       </form>
 
@@ -1279,7 +1399,7 @@ function mostrarFormularioNombre() {
               renderMessage(socket, payload);
               });
                 socket.on('online-users', renderUsers);
-               // socket.on('new-message', renderMessage);
+               
                 
 
 
@@ -1341,13 +1461,15 @@ const renderMessage = (socket, payload) => {
   const $divElement = document.createElement('div');
   $divElement.classList.add('message');
 
-  if (id !== socket.id) {
+  if (id === socket.id) {
+    $divElement.classList.add('outgoing'); // Agrega la clase outgoing si es un mensaje enviado por ti
+  } else {
     $divElement.classList.add('incoming');
   }
 
   $divElement.innerHTML = `<small>${name}</small><p>${message}</p>`;
   document.getElementById('chat').appendChild($divElement);
-
+  $divElement.scrollIntoView(false);
   // Scroll al final de los mensajes...
   document.getElementById('chat').style.display='block';
   console.log(message)
