@@ -369,7 +369,11 @@ h2{
     background-position: center;
     border-radius: 50%;
 }
-
+#chat {
+  overflow-y: auto;
+  max-height: 300px; /* adjust the height to your liking */
+  height: 300px;
+}
 </style>
 
 
@@ -399,7 +403,7 @@ h2{
         <div class="seen" id="last-seen">Hoy a las 12:56</div>
       </div>
 
-      <div class="messages" id="chat">
+      <div class="messages" id="chat" >
 
         <div style="display:none;">
           <div class="time">
@@ -1347,6 +1351,7 @@ const renderMessage = (socket, payload) => {
   // Scroll al final de los mensajes...
   document.getElementById('chat').style.display='block';
   console.log(message)
+
   document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 };
 
