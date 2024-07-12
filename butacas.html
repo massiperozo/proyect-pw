@@ -356,6 +356,8 @@ h2{
         let PelisNoRepetidas=[];
         let Salas=[];
         let horas=[];
+        let eventSource;
+        
        
 
 
@@ -894,7 +896,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
  }
 
  function suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,) {
-  const eventSource = new EventSource(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reservation-updates`);
+   eventSource = new EventSource(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reservation-updates`);
 
   eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
@@ -908,6 +910,11 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
       // Mostrar que el asiento ha sido liberado
       const button = document.getElementsByName(`${data.seat}`)[0];
       button.style.backgroundColor = 'green';
+      if(Salido==1){
+        eventSource.onclose = () => {
+        console.log('Connection closed');
+        };
+      }
     }
   };
 
@@ -999,7 +1006,10 @@ const noCancelButton = document.getElementById('noCancelButton');
 if (noCancelButton) {
   noCancelButton.remove();
 }
-
+if (eventSource) {
+  eventSource.close();
+    console.log('Connection closed');
+  }
   // Mostrar resumen de la reserva
   const resumenContainer = document.createElement('div');
   resumenContainer.style.display = 'flex';
@@ -1036,6 +1046,19 @@ function inicio(){
     location.reload();
   });
 };
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    var enlaceContacto = document.getElementById('Contacto');
+    enlaceContacto.addEventListener('click', function(event) {
+        event.preventDefault(); // Esto previene la recarga de la página
+        // Aquí puedes ejecutar cualquier código o función que desees
+        // Por ejemplo, mostrar un modal de contacto, cambiar el contenido visible, etc.
+        console.log('Sección de contacto activada');
+    });
+});
+
 
 
     </script>
