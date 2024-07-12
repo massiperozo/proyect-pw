@@ -337,10 +337,94 @@ h2{
     opacity: 1; /* Asegura que el color del placeholder sea completamente opaco */
 }
 
+.information-bubble {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Cambiado de center a flex-start para que los elementos se alineen al principio */
+        align-items: flex-start; /* Cambiado de center a flex-start para que los elementos se alineen al principio */
+        position: fixed;
+        top: 10%; /* Cambiado de 40% a 0 para que se posicione en la parte superior */
+        left: 0; /* Cambiado de auto a 0 para que se posicione en la parte izquierda */
+        width: 400px; /* Agregado para establecer un ancho fijo */
+        height: 100vh; /* Agregado para establecer una altura del 100% de la pantalla */
+        transform: none; /* Eliminado para que no se aplique la transformación de translate */
+        
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Un poco de sombra para estilo */
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #241063; /* Fondo azul oscuro */
+        border-radius: 0; /* Eliminado para que no tenga bordes redondeados */
+    }
+
+    .bottom-right {
+    position: absolute;
+    bottom: 0;
+    right: 100px;
+}
+
+.pic {
+    width: 4rem;
+    height: 4rem;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+}
+
 </style>
 
 
 <body>
+  <div class="information-bubble" style="display:none;"  id="information-bubble">
+    <h3>Estado del chat:
+      <small class="hidden" id="status-online">online</small>
+      <small class="hidden" id="status-offline">offline</small>
+    </h3>
+    
+      <h3>Personas conectadas</h3>
+      <ul id="users-list"></ul>
+      <button id="disconnect-btn2" type="submit">Cerrar sesión</button>
+
+
+   
+  </div>
+
+  <!-- Ubicación del chat -->
+  <div class="bottom-right" style="display:none;" id="bottom-right">
+    <!-- Chat -->
+    <div class="chat">
+      <!-- Información del contacto -->
+      <div class="contact bar">
+        <div class="pic" id="username-pic"></div>
+        <div class="name" id="username"></div>
+        <div class="seen" id="last-seen">Hoy a las 12:56</div>
+      </div>
+
+      <div class="messages" id="chat">
+
+        <div style="display:none;">
+          <div class="time">
+            Hoy a las 11:41
+          </div>
+
+          
+        </div>
+
+        <!-- Burbujas mientras escribe -->
+        <div class="message" style="display: none;" id="message">
+          <div class="typing typing-1"></div>
+          <div class="typing typing-2"></div>
+          <div class="typing typing-3"></div>
+        </div>
+      </div>
+
+      <!-- Inputs y Forms -->
+      <form class="input" id="form">
+        <input placeholder="Escribe tu mensaje aquí" type="text" id="input"/>
+        <i class="fas fa-paper-plane"></i>
+      </form>
+
+    </div>
+  </div>
     
 <nav id="menu">
       <ul>
@@ -384,61 +468,8 @@ h2{
       <button id="reserve-button" class="reserve-button" style="display: none;">Reservar</button>
 
 
-      <div class="information-bubble" style="display: none;">
-        <h3>Estado del chat:
-          <small class="hidden" id="status-online">online</small>
-          <small class="hidden" id="status-offline">offline</small>
-        </h3>
-    
-        <h3>Personas conectadas</h3>
-        <ul id="users-list"></ul>
-    
-        <button id="disconnect-btn" type="submit">Cerrar sesión</button>
-      </div>
-    
-      <!-- Ubicación del chat -->
-      <div class="bottom-right">
-        <!-- Chat -->
-        <div class="chat">
-          <!-- Información del contacto -->
-          <div class="contact bar">
-            <div class="pic" id="username-pic"></div>
-            <div class="name" id="username"></div>
-            <div class="seen" id="last-seen">Hoy a las 12:56</div>
-          </div>
-    
-          <div class="messages" id="chat">
-    
-            <div style="display:none;">
-              <div class="time">
-                Hoy a las 11:41
-              </div>
-    
-              <div class="message incoming">
-                Oh, ¿cuál es su problema? 🤔
-              </div>
-    
-              <div class="message">
-                Me robaron mi butaca de la función cine 😡
-              </div>
-            </div>
-    
-            <!-- Burbujas mientras escribe -->
-            <div class="message" style="display: none;">
-              <div class="typing typing-1"></div>
-              <div class="typing typing-2"></div>
-              <div class="typing typing-3"></div>
-            </div>
-          </div>
-    
-          <!-- Inputs y Forms -->
-          <form class="input">
-            <input placeholder="Escribe tu mensaje aquí" type="text" />
-            <i class="fas fa-paper-plane"></i>
-          </form>
-    
-        </div>
-      </div>
+
+
     </div>
     
     <script src="https://cinexunidos-production.up.railway.app/socket.io/socket.io.min.js"></script>
@@ -447,6 +478,17 @@ h2{
 
     <script>
         
+        const messageInput = document.getElementById('input');
+        const chatForm = document.getElementById('form');
+        const derecha = document.getElementById('bottom-right');
+        const pic = document.getElementById('username-pic');
+        const user = document.getElementById('username');
+        const last = document.getElementById('last-seen');
+        const online = document.getElementById('status-online');
+        const offline = document.getElementById('status-offline');
+        const information_bubble = document.getElementById('information-bubble');
+        const usersList = document.getElementById('users-list');
+        const disconnectBtn = document.getElementById('disconnect-btn2');
         const urlBase = "https://cinexunidos-production.up.railway.app";
         const cineCont = document.getElementById('cines');
         const CarteleraCont = document.getElementById('Cartelera');
@@ -1191,12 +1233,60 @@ function mostrarFormularioNombre() {
             if (username) {
                 localStorage.setItem('name', username);
                 ocultarElementos();
-                socket=io.connect(urlBase, {
+
+               const socket=io.connect(urlBase, {
                   WebTransport:['websocket'],
                   auth:{token: 'ABC-456', // Se debería sustituir por un token real...
-                  name: username,}
+                  name: username}
+                  
                   
                 })
+               
+                socket.on('connect', () => {
+                    online.classList.remove('hidden');
+                    offline.classList.add('hidden');
+                    user.textContent = username;
+                    last.innerHTML = getLastSeen();
+
+                    pic.innerHTML = `<img src="https://api.dicebear.com/9.x/initials/svg?seed=${username}" alt="${username}" />`;
+                    console.log('Connected');
+                    usersList.style.display = 'block';
+                    information_bubble.style.display = 'flex';
+                    derecha.style.display = 'block';
+                 });
+
+               socket.on('disconnect', () => {
+                 online.classList.add('hidden');
+                 offline.classList.remove('hidden');
+                 console.log('Disconnected');
+               });
+
+
+
+               chatForm.addEventListener('submit', (evt) => {
+               evt.preventDefault();
+
+               const message = messageInput.value;
+               messageInput.value = '';
+
+               socket.emit('send-message', message);
+              });
+              socket.on('new-message', (payload) => {
+              renderMessage(socket, payload);
+              });
+                socket.on('online-users', renderUsers);
+               // socket.on('new-message', renderMessage);
+                
+
+
+
+                disconnectBtn.style.display='flex';
+                disconnectBtn.addEventListener('click', (evt) => {
+                evt.preventDefault();
+                localStorage.removeItem('name');
+                socket.close();
+                location.reload();
+                });
                 
                 console.log('Nombre guardado:', username);
             }
@@ -1204,6 +1294,61 @@ function mostrarFormularioNombre() {
         document.body.appendChild(formNombre);
     }
 }
+
+function configurarSocketListeners() {
+    socket.on('online-users', renderUsers);
+}
+
+
+
+
+
+
+const renderUsers = (users) => {
+    usersList.innerHTML = ''; // Limpia la lista actual de usuarios
+    users.forEach((user) => {
+        const li = document.createElement('li'); 
+        li.textContent = user.name; 
+        console.log(user.name);
+        li.style.color = '#00698f'; // Cambia el color del texto a azul claro
+        li.style.fontWeight = 'bold'; // Agrega negrita al texto
+        li.style.marginBottom = '10px'; // Agregado para separar cada elemento li con un margen inferior
+        usersList.appendChild(li); 
+    });
+};
+
+function getLastSeen() {
+    // Obtener la fecha actual
+    const now = new Date();
+
+    // Convertir a huso horario de Venezuela (GMT-4)
+    const venezuelaTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Caracas' }));
+
+    // Formatear la fecha
+    const options = { hour: 'numeric', minute: 'numeric', hour12: true };
+    const formattedTime = venezuelaTime.toLocaleTimeString('es-VE', options);
+
+    return `<small>Hoy a las ${formattedTime}</small>`;
+}
+
+const renderMessage = (socket, payload) => {
+  const { id, message, name } = payload;
+
+  const $divElement = document.createElement('div');
+  $divElement.classList.add('message');
+
+  if (id !== socket.id) {
+    $divElement.classList.add('incoming');
+  }
+
+  $divElement.innerHTML = `<small>${name}</small><p>${message}</p>`;
+  document.getElementById('chat').appendChild($divElement);
+
+  // Scroll al final de los mensajes...
+  document.getElementById('chat').style.display='block';
+  console.log(message)
+  document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+};
 
 document.addEventListener('DOMContentLoaded', function() {
     var enlaceContacto = document.getElementById('Carameleria');
