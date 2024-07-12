@@ -237,6 +237,11 @@ p {
   
 }
 
+.NombresQueSeMuestran {
+  font-weight: bold; /* Negrita */
+  color: #8274af; /* Azul oscuro, pero puedes cambiarlo a cualquier color que desees */
+}
+
 
 .reserve-button2:hover {
   background-color: #060713; /* Cambiar color al pasar el ratón */
@@ -409,10 +414,12 @@ h2{
 
 .message, .outgoing {
   word-break: break-word;
+  padding-left:10px;
 }
 
 .message, .incoming {
   word-break: break-word;
+  padding-left:10px;
 }
 
 
@@ -1466,8 +1473,8 @@ const renderMessage = (socket, payload) => {
   } else {
     $divElement.classList.add('incoming');
   }
-
-  $divElement.innerHTML = `<small>${name}</small><p>${message}</p>`;
+  
+  $divElement.innerHTML = `<small class="NombresQueSeMuestran">${name}</small><p>${message}</p>`;
   document.getElementById('chat').appendChild($divElement);
   $divElement.scrollIntoView(false);
   // Scroll al final de los mensajes...
