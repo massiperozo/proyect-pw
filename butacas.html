@@ -503,6 +503,18 @@ h2{
     font-weight: 400;
     letter-spacing: 0.025em;
 }
+
+#disconnect-btn2{
+  background-color: #8274af;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  top: 900px;
+  margin-top: 1rem;
+}
+
 </style>
 
 
@@ -515,10 +527,9 @@ h2{
     
       <h3>Personas conectadas</h3>
       <ul id="users-list"></ul>
+      
       <button id="disconnect-btn2" type="submit">Cerrar sesión</button>
-
-
-   
+         
   </div>
 
   <!-- Ubicación del chat -->
@@ -1358,6 +1369,7 @@ function mostrarFormularioNombre() {
         formNombre.style.top = '50%';
         formNombre.style.left = '50%';
         formNombre.style.transform = 'translate(-50%, -50%)';
+
         formNombre.onsubmit = function(e) {
             e.preventDefault();
             const username = this.querySelector('input').value;
@@ -1365,61 +1377,136 @@ function mostrarFormularioNombre() {
                 localStorage.setItem('name', username);
                 ocultarElementos();
 
-               const socket=io.connect(urlBase, {
-                  WebTransport:['websocket'],
-                  auth:{token: 'ABC-456', // Se debería sustituir por un token real...
-                  name: username}
-                  
-                  
-                })
+                // Crear contenedor para los botones
+                const contenedorBotones = document.createElement('div');
+                contenedorBotones.innerHTML = `
+                  <button id="btnClientes">Clientes</button>
+                  <button id="btnEmpleados">Empleados</button>
+                    `;
+                  document.body.appendChild(contenedorBotones);
+
+                  contenedorBotones.style.position = 'fixed';
+                  contenedorBotones.style.top = '50%';
+                  contenedorBotones.style.left = '50%';
+                  contenedorBotones.style.transform = 'translate(-50%, -50%)';
+                  contenedorBotones.style.backgroundColor = '#8274af';
+                  contenedorBotones.style.padding = '10px 20px';
+                  contenedorBotones.style.border = 'none';
+                  contenedorBotones.style.color = '#fff';
+                  contenedorBotones.style.borderRadius = '5px';
+                  contenedorBotones.style.cursor = 'pointer';
+                                    
+                 
+                  const btnClientes = document.getElementById('btnClientes');
+
+                  const btnEmpleados = document.getElementById('btnEmpleados');
+
+                  btnClientes.addEventListener('click', () => {
+                    contenedorBotones.style.display = 'none';
+                      const socket=io.connect(urlBase, {
+                        WebTransport:['websocket'],
+                        auth:{token: 'ABC-456', // Se debería sustituir por un token real...
+                        name: username}
+                      })
+
+                      socket.on('connect', () => {
+                        online.classList.remove('hidden');
+                        offline.classList.add('hidden');
+                        user.textContent = username;
+                        last.innerHTML = getLastSeen();
+
+                        pic.innerHTML = `<img src="https://api.dicebear.com/9.x/initials/svg?seed=${username}" alt="${username}" />`;
+                        console.log('Connected');
+                        usersList.style.display = 'block';
+                        information_bubble.style.display = 'flex';
+                        derecha.style.display = 'block';
+                      });
+
+                      socket.on('disconnect', () => {
+                        online.classList.add('hidden');
+                        offline.classList.remove('hidden');
+                        console.log('Disconnected');
+                      });
+
+                      chatForm.addEventListener('submit', (evt) => {
+                        evt.preventDefault();
+
+                        const message = messageInput.value;
+                        messageInput.value = '';
+
+                        socket.emit('send-message', message);
+                      });
+                      socket.on('new-message', (payload) => {
+                        renderMessage(socket, payload);
+                      });
+                      socket.on('online-users', renderUsers);
                
-                socket.on('connect', () => {
-                    online.classList.remove('hidden');
-                    offline.classList.add('hidden');
-                    user.textContent = username;
-                    last.innerHTML = getLastSeen();
+              
+                      disconnectBtn.style.display='flex';
+                      disconnectBtn.addEventListener('click', (evt) => {
+                        evt.preventDefault();
+                        localStorage.removeItem('name');
+                        socket.close();
+                        location.reload();
+                      });
+                
+                      console.log('Nombre guardado:', username);
+                  });
 
-                    pic.innerHTML = `<img src="https://api.dicebear.com/9.x/initials/svg?seed=${username}" alt="${username}" />`;
-                    console.log('Connected');
-                    usersList.style.display = 'block';
-                    information_bubble.style.display = 'flex';
-                    derecha.style.display = 'block';
-                 });
+                  btnEmpleados.addEventListener('click', () => {
+                    contenedorBotones.style.display = 'none';
+                      const socket=io.connect(urlBase, {
+                        WebTransport:['websocket'],
+                        auth:{token: 'ABC-456', // Se debería sustituir por un token real...
+                        name: username}
+                      })
 
-               socket.on('disconnect', () => {
-                 online.classList.add('hidden');
-                 offline.classList.remove('hidden');
-                 console.log('Disconnected');
-               });
+                      socket.on('connect', () => {
+                        online.classList.remove('hidden');
+                        offline.classList.add('hidden');
+                        user.textContent = username;
+                        last.innerHTML = getLastSeen();
 
+                        pic.innerHTML = `<img src="https://api.dicebear.com/9.x/initials/svg?seed=${username}" alt="${username}" />`;
+                        console.log('Connected');
+                        usersList.style.display = 'block';
+                        information_bubble.style.display = 'flex';
+                        derecha.style.display = 'block';
+                      });
 
+                      socket.on('disconnect', () => {
+                        online.classList.add('hidden');
+                        offline.classList.remove('hidden');
+                        console.log('Disconnected');
+                      });
 
-               chatForm.addEventListener('submit', (evt) => {
-               evt.preventDefault();
+                      chatForm.addEventListener('submit', (evt) => {
+                        evt.preventDefault();
 
-               const message = messageInput.value;
-               messageInput.value = '';
+                        const message = messageInput.value;
+                        messageInput.value = '';
 
-               socket.emit('send-message', message);
-              });
-              socket.on('new-message', (payload) => {
-              renderMessage(socket, payload);
-              });
-                socket.on('online-users', renderUsers);
+                        socket.emit('send-message', message);
+                      });
+                      socket.on('new-message', (payload) => {
+                        renderMessage(socket, payload);
+                      });
+                      socket.on('online-users', renderUserEmpleados);
                
+              
+                      disconnectBtn.style.display='flex';
+                      disconnectBtn.addEventListener('click', (evt) => {
+                        evt.preventDefault();
+                        localStorage.removeItem('name');
+                        socket.close();
+                        location.reload();
+                      });
                 
+                      console.log('Nombre guardado:', username);
+                    
+                  });
 
-
-
-                disconnectBtn.style.display='flex';
-                disconnectBtn.addEventListener('click', (evt) => {
-                evt.preventDefault();
-                localStorage.removeItem('name');
-                socket.close();
-                location.reload();
-                });
-                
-                console.log('Nombre guardado:', username);
+            
             }
         };
         document.body.appendChild(formNombre);
@@ -1430,11 +1517,6 @@ function configurarSocketListeners() {
     socket.on('online-users', renderUsers);
 }
 
-
-
-
-
-
 const renderUsers = (users) => {
     usersList.innerHTML = ''; // Limpia la lista actual de usuarios
     users.forEach((user) => {
@@ -1444,9 +1526,27 @@ const renderUsers = (users) => {
         li.style.color = '#00698f'; // Cambia el color del texto a azul claro
         li.style.fontWeight = 'bold'; // Agrega negrita al texto
         li.style.marginBottom = '10px'; // Agregado para separar cada elemento li con un margen inferior
+        li.style.overflowY = 'auto';
         usersList.appendChild(li); 
     });
 };
+
+const renderUserEmpleados = (users)=>{
+  usersList.innerHTML = '';
+  const empleados = users.filter(user => user.name.startsWith("Empleado"));
+  empleados.forEach((empleado => {
+    const li = document.createElement('li');
+    li.textContent = user.name;
+    li.style.color = '#00698f';
+    li.style.fontWeight = 'bold';
+    li.style.marginBottom = '10px';
+    li.style.overflowY = 'auto';
+    usersList.appendChild(li);
+  })
+)
+}
+
+
 
 function getLastSeen() {
     // Obtener la fecha actual
