@@ -1593,7 +1593,79 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+function mostrarGolosinas() {
+  // Obtener el elemento del enlace de Carameleria
+  const enlaceCarameleria = document.getElementById('Carameleria');
 
+  // Agregar un evento de clic al enlace de Carameleria
+  enlaceCarameleria.addEventListener('click', function(event) {
+    event.preventDefault();
+    ocultarElementos();
+    // Mostrar todas las golosinas disponibles
+    const golosinas = ['Palomitas', 'Refresco', 'Nachos', 'Hot Dog'];
+    const golosinasContainer = document.createElement('div');
+    golosinasContainer.classList.add('golosinas-container');
+
+    golosinasContainer.style.display='flex';
+    golosinasContainer.style.flexWrap='wrap'
+    golosinasContainer.style.justifyContent='center';
+    golosinasContainer.style.gap='1rem';
+    golosinasContainer.style.marginTop='2rem';
+    golosinasContainer.style.display = 'flex';
+    golosinasContainer.style.flexDirection = 'column';
+    golosinasContainer.style.alignItems = 'center';
+    golosinasContainer.style.backgroundColor = '#1485b9';
+    golosinasContainer.style.padding = '1rem';
+    golosinasContainer.style.borderRadius = '0.5rem';
+    golosinasContainer.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)';
+    
+    
+
+    golosinas.forEach(function(golosina) {
+      const golosinaItem = document.createElement('div');
+      golosinaItem.classList.add('golosina-item');
+      golosinaItem.innerHTML = `
+        <span>${golosina}</span>
+        <input type="number" min="0" value="0" />
+      `;
+      golosinasContainer.appendChild(golosinaItem);
+    });
+
+    // Agregar un botón para confirmar la selección de golosinas
+    const confirmarBtn = document.createElement('button');
+    confirmarBtn.textContent = 'Confirmar';
+    confirmarBtn.style.backgroundColor = '#f9a826';
+    confirmarBtn.style.color = '#fff';
+    confirmarBtn.style.padding = '0.75rem 2rem';
+    confirmarBtn.style.border = 'none';
+    confirmarBtn.style.borderRadius = '0.25rem';
+    confirmarBtn.style.cursor = 'pointer';
+    confirmarBtn.style.marginTop = '2rem';
+    confirmarBtn.style.position='center';
+    confirmarBtn.style.display = 'block';
+
+    confirmarBtn.addEventListener('click', function() {
+      // Obtener la cantidad seleccionada de cada golosina
+      const golosinaItems = document.querySelectorAll('.golosina-item');
+      const seleccionGolosinas = [];
+
+      golosinaItems.forEach(function(item) {
+        const golosina = item.querySelector('span').textContent;
+        const cantidad = parseInt(item.querySelector('input').value);
+        seleccionGolosinas.push({ golosina, cantidad });
+      });
+
+      // Hacer algo con la selección de golosinas
+      console.log(seleccionGolosinas);
+    });
+
+    // Agregar el contenedor de golosinas y el botón al documento
+    document.body.appendChild(golosinasContainer);
+    document.body.appendChild(confirmarBtn);
+  });
+}
+
+mostrarGolosinas();
 
     </script>
 </body>
