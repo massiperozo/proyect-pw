@@ -400,7 +400,7 @@ h2{
     z-index: 2;
     box-sizing: border-box;
     border-radius: 1rem;
-    background: white;
+    background: #1485b9;
     box-shadow:
         0 0 8rem 0 rgba(0, 0, 0, 0.1),
 }
@@ -642,6 +642,7 @@ h2{
         let Salas=[];
         let horas=[];
         let eventSource;
+        let empleado
         
        
 
@@ -1455,6 +1456,7 @@ function mostrarFormularioNombre() {
 
                   btnEmpleados.addEventListener('click', () => {
                     contenedorBotones.style.display = 'none';
+
                       const socket=io.connect(urlBase, {
                         WebTransport:['websocket'],
                         auth:{token: 'ABC-456', // Se debería sustituir por un token real...
@@ -1488,8 +1490,8 @@ function mostrarFormularioNombre() {
 
                         socket.emit('send-message', message);
                       });
-                      socket.on('new-message', (payload) => {
-                        renderMessage(socket, payload);
+                      socket.on('new-message', (payload) => { 
+                        renderMessageEmpleados(socket, payload);
                       });
                       socket.on('online-users', renderUserEmpleados);
                
@@ -1530,13 +1532,12 @@ const renderUsers = (users) => {
         usersList.appendChild(li); 
     });
 };
-
 const renderUserEmpleados = (users)=>{
   usersList.innerHTML = '';
-  const empleados = users.filter(user => user.name.startsWith("Empleado"));
+  const empleados = users.filter(user => user.name.toLowerCase().startsWith("empleado"));
   empleados.forEach((empleado => {
     const li = document.createElement('li');
-    li.textContent = user.name;
+    li.textContent = empleado.name; // Cambia user.name por empleado.name
     li.style.color = '#00698f';
     li.style.fontWeight = 'bold';
     li.style.marginBottom = '10px';
@@ -1582,6 +1583,30 @@ const renderMessage = (socket, payload) => {
   console.log(message)
 
   document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+};
+
+const renderMessageEmpleados = (socket, payload) => {
+  const { id, message, name } = payload;
+
+  if (name.toLowerCase().startsWith('empleado')) {
+    const $divElement = document.createElement('div');
+    $divElement.classList.add('message');
+
+    if (id === socket.id) {
+      $divElement.classList.add('outgoing'); // Agrega la clase outgoing si es un mensaje enviado por ti
+    } else {
+      $divElement.classList.add('incoming');
+    }
+    
+    $divElement.innerHTML = `<small class="NombresQueSeMuestran">${name}</small><p>${message}</p>`;
+    document.getElementById('chat').appendChild($divElement);
+    $divElement.scrollIntoView(false);
+    // Scroll al final de los mensajes...
+    document.getElementById('chat').style.display='block';
+    console.log(message)
+
+    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+  }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
