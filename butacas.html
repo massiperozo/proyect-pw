@@ -1588,7 +1588,7 @@ const renderMessage = (socket, payload) => {
 const renderMessageEmpleados = (socket, payload) => {
   const { id, message, name } = payload;
 
-  if (name.toLowerCase().startsWith('empleado')) {
+  if (name.toLowerCase().startsWith('empleado') || id === socket.id) {
     const $divElement = document.createElement('div');
     $divElement.classList.add('message');
 
