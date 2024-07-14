@@ -514,7 +514,86 @@ h2{
   top: 900px;
   margin-top: 1rem;
 }
+.ContenedroCompra {
+  text-align: center;
+ 
+  flex-direction: column;
+  align-items: center;
+  display: none;
+  background-color:#3612da;
+  width: 250px; /* Ajusta el ancho del contenedor */
+  
+  border-radius: 20px; /* Agrega bordes redondos */
+  padding: 20px; /* Agrega un padding para separar el contenido del borde */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Agrega una sombra para dar profundidad */
+}
 
+.TextoCantidad{
+  
+  color:#fff;
+  font-size: 20px;
+  font-weight: bold;
+  width: 50px;
+  margin-bottom: 10px; /* Agrega un margen inferior para separar del botón */
+}
+
+.btn {
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  margin: 10px;
+  border: none;
+  border-radius: 50%;
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* Agrega un contenedor para los botones de incremento y decremento */
+.botones {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+ #plus {
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  margin: 10px;
+  border: none;
+  border-radius: 50%; /* Vuelve a ser un círculo */
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+}
+
+#minus {
+  width: 30px;
+  height: 30px;
+  font-size: 24px;
+  margin: 10px;
+  border: none;
+  border-radius: 50%; /* Vuelve a ser un círculo */
+  background-color: #da1212;
+  color: #fff;
+  cursor: pointer;
+}
+
+#confirmar {
+  margin-top: 40px; /* Aumenta el margen superior para que quede un poco más abajo */
+  width: 100%;
+  border-radius: 20px;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+  text-transform: uppercase; /* Pone la palabra "Confirmar" en mayúsculas */
+  font-size: 18px; /* Ajusta el tamaño de la fuente */
+  font-weight: bold; /* Pone la fuente en negrita */
+  position: relative; 
+  top: -5px; /* Sube la palabra 5 píxeles hacia arriba */
+}
 </style>
 
 
@@ -602,7 +681,14 @@ h2{
     <div class="containe2" id="conatainerTota2">  
         <div id="Salas" class="Salas">             
     </div>
-
+    <div class="ContenedroCompra" >
+      <div class="TextoCantidad"><p id="cantidad">0</p></div>
+      <div class="botones"><button id="minus" class="btn">-</button>
+                            <button id="plus" class="btn">+</button></div>
+      
+      <button id="confirmar" class="btn" style="display: none;">Confirmar</button>
+    </div>
+    
     <div id="seat-container" style="width: 1200px; height: 600px; margin: 40px auto; background-color: #B88722; padding: 20px; border: 1px solid #ccc; border-radius: 10px;">
       <!-- Contenido de los asientos -->
        
@@ -642,7 +728,8 @@ h2{
         let Salas=[];
         let horas=[];
         let eventSource;
-        let empleado
+        let cantidad = 0;
+        let asientosVerdesSeleccionados=0;
         
        
 
@@ -849,7 +936,7 @@ function Mostrar_Salas(nombre, Cineid, cinenombre) {
               const { showtimeId, auditoriumId, nombrecine, nombrepeli} = event.target.data;
               
               Ocultar3();
-              Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli,cinenombre);
+              Cantidades(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli,cinenombre);
             });
             horasDiv.appendChild(horaButton);
           }
@@ -860,9 +947,53 @@ function Mostrar_Salas(nombre, Cineid, cinenombre) {
 }
 
 
-function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre) {
+function Cantidades(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli, cinenombre) {
+  
+  
   const salas = document.getElementById("salas");
     salas.style.display = 'none';
+  document.getElementById('cantidad').textContent = cantidad;
+  document.querySelector('.ContenedroCompra').style.display = 'flex'; 
+
+  document.getElementById('minus').addEventListener('click', () => {
+    if (cantidad > 0) {
+      cantidad--;
+      document.getElementById('cantidad').textContent = cantidad;
+    }
+  });
+
+  document.getElementById('plus').addEventListener('click', () => {
+    cantidad++;
+    document.getElementById('cantidad').textContent = cantidad;
+  });
+
+  const cantidadElement = document.getElementById('cantidad');
+  const confirmarElement = document.getElementById('confirmar');
+
+  const observer = new MutationObserver(() => {
+    if (cantidad > 0) {
+      confirmarElement.style.display = 'block';
+    } else {
+      confirmarElement.style.display = 'none';
+    }
+  });
+
+  observer.observe(cantidadElement, {
+    childList: true,
+    subtree: true
+  });
+
+  document.getElementById('confirmar').addEventListener('click', () => {
+    console.log(cantidad);
+    Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli,cinenombre);
+    document.querySelector('.ContenedroCompra').style.display = 'none';
+    
+  });
+}
+
+function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre) {
+  asientosVerdesSeleccionados = 0;
+  
   console.log(salaName, hora, showtimeId, auditoriumId, Cineid, nombre)
   suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
   document.getElementById('seat-container').style.display = 'flex';
@@ -918,17 +1049,22 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
             const currentButton = event.target; // Obtienes la referencia del botón que se ha clickeado
             const buttonColor = currentButton.style.backgroundColor;
             
-             if (buttonColor === 'green') {if (!selectedSeatsCancel || selectedSeatsCancel.length === 0){
+            if (buttonColor === 'green') {  if (!(cantidad===asientosVerdesSeleccionados)){
+              if (!selectedSeatsCancel || selectedSeatsCancel.length === 0){
                  currentButton.style.backgroundColor = 'blue';
                  if (!selectedSeats || selectedSeats.length === 0) {
+                  asientosVerdesSeleccionados++;
                   MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre);
                   selectedSeats.push(asiento);
                  } else {
+                   asientosVerdesSeleccionados++;
                    selectedSeats.push(asiento); 
                  }}
-                 else {alert('Para reservar tiene que Finalizar la cancelacion de reserva');}
                  
-                                          } 
+               else {alert('Para reservar tiene que Finalizar la cancelacion de reserva');}}
+              
+              else{alert(`No puede reservar mas de lo que confirmo anteriormente, Cantidad Confirmada: ${cantidad}`);}
+              } 
              else   {if (!selectedSeats || selectedSeats.length === 0)
                  {currentButton.style.backgroundColor = 'blue';
                  if (!selectedSeats || selectedSeats.length === 0) {
@@ -959,17 +1095,22 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
             const currentButton = event.target; // Obtienes la referencia del botón que se ha clickeado
             const buttonColor = currentButton.style.backgroundColor;
 
-            if (buttonColor === 'green') {
+            if (buttonColor === 'green') {  if (!(cantidad===asientosVerdesSeleccionados)){
               if (!selectedSeatsCancel || selectedSeatsCancel.length === 0){
                  currentButton.style.backgroundColor = 'blue';
                  if (!selectedSeats || selectedSeats.length === 0) {
+                  asientosVerdesSeleccionados++;
                   MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre);
                   selectedSeats.push(asiento);
                  } else {
+                   asientosVerdesSeleccionados++;
                    selectedSeats.push(asiento); 
                  }}
                  
-               else {alert('Para reservar tiene que Finalizar la cancelacion de reserva');}} 
+               else {alert('Para reservar tiene que Finalizar la cancelacion de reserva');}}
+              
+              else{alert(`No puede reservar mas de lo que confirmo anteriormente, Cantidad Confirmada: ${cantidad}`);}
+              } 
 
 
              else   {if (!selectedSeats || selectedSeats.length === 0)
@@ -1034,7 +1175,7 @@ function MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
     selectedSeats.forEach((seat) => {
     const button = document.getElementsByName(`${seat}`)[0];
     button.style.backgroundColor = 'green';
-    
+    asientosVerdesSeleccionados=0;
 
     // Ocultar los botones de confirmar y cancelar
     reserveButton.style.display = 'none';
@@ -1097,7 +1238,9 @@ function MostrarCancelarReserva(salaName, hora, showtimeId, auditoriumId, Cineid
  
 
 function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre) {
+  
   selectedSeatsCancel.forEach(asiento => {
+
     fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reserve`, {
       method: 'DELETE',
       headers: {
@@ -1314,13 +1457,14 @@ resumenContainer.style.transform = 'translate(-50%, -50%)';
 
   const detailsElement = document.createElement('p');
   
-  detailsElement.innerHTML = `<b>Nombre de la pelicula: <span style="color: #2F4F7F">${nombre}</span></b>`;
+  detailsElement.innerHTML = `<b style="color: #fff">Nombre de la pelicula: <span style="color: #2F4F7F">${nombre}</span></b>`;
   resumenContainer.appendChild(detailsElement);
 
   let asientos=Prob.join(', ');
   
   const asientosElement = document.createElement('p');
-  asientosElement.innerHTML = `Asientos seleccionados: <b>${asientos}</b>`;
+  asientosElement.innerHTML = `Asientos seleccionados: <b style="color: #2F4F7F">${asientos}</b>`;
+  asientosElement.style.color= 'white';
   resumenContainer.appendChild(asientosElement);
 
   document.body.appendChild(resumenContainer);
@@ -1534,7 +1678,8 @@ const renderUsers = (users) => {
 };
 const renderUserEmpleados = (users)=>{
   usersList.innerHTML = '';
-  const empleados = users.filter(user => user.name.toLowerCase().startsWith("empleado"));
+
+  const empleados = users.filter(user => user.name.toLowerCase().startsWith("empleado") || user.name === username.textContent);
   empleados.forEach((empleado => {
     const li = document.createElement('li');
     li.textContent = empleado.name; // Cambia user.name por empleado.name
