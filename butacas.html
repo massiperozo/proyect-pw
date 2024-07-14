@@ -584,7 +584,7 @@ h2{
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  top: 900px;
+  
   margin-top: 1rem;
 }
 .ContenedroCompra {
@@ -1669,7 +1669,7 @@ function mostrarFormularioNombre() {
                       });
                       socket.on('online-users', renderUsers);
                
-              
+                      disconnectBtn.classList.add('mi-boton')
                       disconnectBtn.style.display='flex';
                       disconnectBtn.addEventListener('click', (evt) => {
                         evt.preventDefault();
