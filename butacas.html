@@ -348,7 +348,7 @@ h2{
         justify-content: flex-start; /* Cambiado de center a flex-start para que los elementos se alineen al principio */
         align-items: flex-start; /* Cambiado de center a flex-start para que los elementos se alineen al principio */
         position: fixed;
-        top: 10%; /* Cambiado de 40% a 0 para que se posicione en la parte superior */
+        top: 0%; /* Cambiado de 40% a 0 para que se posicione en la parte superior */
         left: 0; /* Cambiado de auto a 0 para que se posicione en la parte izquierda */
         width: 400px; /* Agregado para establecer un ancho fijo */
         height: 100vh; /* Agregado para establecer una altura del 100% de la pantalla */
@@ -1686,7 +1686,7 @@ const renderUsers = (users) => {
 const renderUserEmpleados = (users)=>{
   usersList.innerHTML = '';
 
-  const empleados = users.filter(user => user.name.toLowerCase().startsWith("empleado") || user.name === username.textContent);
+  const empleados = users.filter(user => user.name.toLowerCase().startsWith("empleado") || user.name === username.textContent || user.name.toLowerCase().endsWith('empleado') || user.name.toLowerCase().startsWith('soporte') ||user.name.toLowerCase().endsWith('soporte'));
   empleados.forEach((empleado => {
     const li = document.createElement('li');
     li.textContent = empleado.name; // Cambia user.name por empleado.name
@@ -1740,7 +1740,7 @@ const renderMessage = (socket, payload) => {
 const renderMessageEmpleados = (socket, payload) => {
   const { id, message, name } = payload;
 
-  if (name.toLowerCase().startsWith('empleado') || id === socket.id) {
+  if (name.toLowerCase().startsWith('empleado') ||  name.toLowerCase().endsWith('empleado') || id === socket.id || name.toLowerCase().startsWith('soporte') ||  name.toLowerCase().endsWith('soporte') ) {
     const $divElement = document.createElement('div');
     $divElement.classList.add('message');
 
