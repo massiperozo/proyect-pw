@@ -682,6 +682,7 @@ h2{
         <div id="Salas" class="Salas">             
     </div>
     <div class="ContenedroCompra" >
+      <h2>Selecione la cantidad Maxima a reservar</h2>
       <div class="TextoCantidad"><p id="cantidad">0</p></div>
       <div class="botones"><button id="minus" class="btn">-</button>
                             <button id="plus" class="btn">+</button></div>
@@ -730,6 +731,7 @@ h2{
         let eventSource;
         let cantidad = 0;
         let asientosVerdesSeleccionados=0;
+        let Salido=0;
         
        
 
@@ -763,7 +765,7 @@ h2{
       });
 
       cines.appendChild(centroComercial);
-      console.log(element);
+      
     });
   });
 
@@ -825,7 +827,7 @@ function Ocultar4() {
 
 
 function Mostrar_Pelis(Cineid,cinenombre) {
-  console.log(Cineid);
+  
   ApareceCartelera();
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums`)
   .then(response => response.json())
@@ -842,7 +844,7 @@ function Mostrar_Pelis(Cineid,cinenombre) {
       });
     });
     PelisNoRepetidas = [...new Set(peliculas.map(pelicula => JSON.stringify(pelicula)))].map(pelicula => JSON.parse(pelicula));
-    console.log(PelisNoRepetidas); // Array con objetos de películas
+    
     PelisNoRepetidas.forEach(pelicula => {
   const button = document.createElement('button');
   button.classList.add('Pelis'); 
@@ -886,7 +888,7 @@ function Mostrar_Pelis(Cineid,cinenombre) {
 }
 
 function Mostrar_Salas(nombre, Cineid, cinenombre) {
-  console.log(nombre);
+ 
   ApareceSalas(); 
     const cartelera = document.getElementById("cartelera");
     cartelera.style.display = 'none';
@@ -984,7 +986,7 @@ function Cantidades(salaName, hora, showtimeId, auditoriumId, nombrecine, nombre
   });
 
   document.getElementById('confirmar').addEventListener('click', () => {
-    console.log(cantidad);
+   
     Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, nombrecine, nombrepeli,cinenombre);
     document.querySelector('.ContenedroCompra').style.display = 'none';
     
@@ -994,7 +996,7 @@ function Cantidades(salaName, hora, showtimeId, auditoriumId, nombrecine, nombre
 function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre) {
   asientosVerdesSeleccionados = 0;
   
-  console.log(salaName, hora, showtimeId, auditoriumId, Cineid, nombre)
+  
   suscribirseAActualizaciones(salaName, hora, showtimeId, auditoriumId, Cineid, nombre);
   document.getElementById('seat-container').style.display = 'flex';
   // Agregar título y detalles de la película
@@ -1009,7 +1011,7 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
    fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}`)
  .then(response => response.json())
  .then(data => {
-    console.log(data)
+    
     let index ;
     let index2;
     const seatLetters = Object.keys(data.seats);
@@ -1036,7 +1038,7 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
       seatArray.forEach(seat => {
         const seatId = `${seatLetter}${seat}`;
         if (seat == 0) {
-          console.log(`${seatLetter}${index}`);
+          
           const button = document.createElement('button');
          
           button.style.backgroundColor = 'green';
@@ -1081,7 +1083,7 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
           rowContainer.appendChild(button);
           index++;
         } else if (seat === 2) {
-          console.log(`${seatLetter}${index}`);
+          
           const button = document.createElement('button');
           
           const asiento=`${seatLetter}${index+index2}`;
@@ -1126,7 +1128,7 @@ function Mostrar_butacas(salaName, hora, showtimeId, auditoriumId, Cineid, nombr
           rowContainer.appendChild(button);
           index++;
         } else {
-          console.log(`${seatLetter}${index}`);
+          
           const button = document.createElement('button');
           button.textContent = `A0`;
           button.textContent = ' '; // Agregar un espacio en blanco para indicar asiento vacío
@@ -1256,7 +1258,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
       }
     })
    .then(data => {
-      console.log(`Asiento liberado exitosamente, Asiento Liberado:${asiento}`);
+      
       const button = document.getElementsByName(`${asiento}`)[0];
       button.style.backgroundColor = 'green';
     })
@@ -1274,12 +1276,11 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
 
  function Realiza_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,cinenombre){
   Ocultar4();
-  console.log(`${selectedSeats}`)
+  
   const totalSeats = selectedSeats.length;
   let currentSeat = 0;
   let Prob = [];
-  console.log(Prob);
-  console.log(Prob);
+  
   selectedSeats.forEach(seat2 => {
   fetch(`${urlBase}/theatres/${Cineid}/auditoriums/${auditoriumId}/showtimes/${showtimeId}/reserve`, {
   method: 'POST',
@@ -1296,7 +1297,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
   }
 })
 .then(data => {  Prob.push(seat2);
-  console.log(`Asiento reservado exitosamente, Asiento Reservado:${seat2 }`);
+ 
   const button = document.getElementsByName(`${seat2}`)[0];
   
  
@@ -1308,7 +1309,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
   currentSeat++;
 
   if (currentSeat === totalSeats) {
-    console.log(Prob);
+    
         resumenReserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,Prob,cinenombre);
       }
 })
@@ -1329,7 +1330,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
 
   eventSource.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log(`Received update: ${data.message}`);
+   
     // Procesar la actualización aquí
     if (data.result === 'SEAT_RESERVED') {
       // Mostrar que el asiento ha sido reservado
@@ -1341,7 +1342,7 @@ function Cancelar_Reserva(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
       button.style.backgroundColor = 'green';
       if(Salido==1){
         eventSource.onclose = () => {
-        console.log('Connection closed');
+        
         };
       }
     }
@@ -1411,6 +1412,7 @@ function mostrarResumenDeReserva(selectedSeats, salaName, hora, showtimeId, audi
 
 function resumenReserva(salaName, hora, showtimeId, auditoriumId, Cineid, nombre,Prob,cinenombre) {
   // Ocultar botones y divs
+  Salido=1;
   const seatContainer = document.getElementById('seat-container');
   if (seatContainer) {
   seatContainer.remove();
@@ -1487,14 +1489,12 @@ document.addEventListener('DOMContentLoaded', function() {
         ocultarElementos();
         // Mostrar el formulario para ingresar el nombre si no está ya visible
         mostrarFormularioNombre();
-        console.log('Sección de contacto activada');
+        
     });
 });
 
 function ocultarElementos() {
-    // Aquí debes agregar el código para ocultar todos los elementos
-    // excepto el botón de contacto y el botón de inicio.
-    // Por ejemplo:
+    
     document.querySelectorAll('body > *:not(nav)').forEach(function(element) {
         element.style.display = 'none';
     });
@@ -1547,6 +1547,9 @@ function mostrarFormularioNombre() {
                   const btnEmpleados = document.getElementById('btnEmpleados');
 
                   btnClientes.addEventListener('click', () => {
+                    document.querySelectorAll('body > *:not(#inicio)').forEach(element => {
+                     element.style.display = 'none';
+                    });
                     contenedorBotones.style.display = 'none';
                       const socket=io.connect(urlBase, {
                         WebTransport:['websocket'],
@@ -1595,10 +1598,13 @@ function mostrarFormularioNombre() {
                         location.reload();
                       });
                 
-                      console.log('Nombre guardado:', username);
+                     
                   });
 
                   btnEmpleados.addEventListener('click', () => {
+                    document.querySelectorAll('body > *:not(#inicio)').forEach(element => {
+                     element.style.display = 'none';
+                    });
                     contenedorBotones.style.display = 'none';
 
                       const socket=io.connect(urlBase, {
@@ -1657,6 +1663,7 @@ function mostrarFormularioNombre() {
         };
         document.body.appendChild(formNombre);
     }
+    else {document.querySelector('.form-nombre').style.display= 'flex'}
 }
 
 function configurarSocketListeners() {
@@ -1668,7 +1675,7 @@ const renderUsers = (users) => {
     users.forEach((user) => {
         const li = document.createElement('li'); 
         li.textContent = user.name; 
-        console.log(user.name);
+        
         li.style.color = '#00698f'; // Cambia el color del texto a azul claro
         li.style.fontWeight = 'bold'; // Agrega negrita al texto
         li.style.marginBottom = '10px'; // Agregado para separar cada elemento li con un margen inferior
@@ -1725,7 +1732,7 @@ const renderMessage = (socket, payload) => {
   $divElement.scrollIntoView(false);
   // Scroll al final de los mensajes...
   document.getElementById('chat').style.display='block';
-  console.log(message)
+  
 
   document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 };
@@ -1748,7 +1755,7 @@ const renderMessageEmpleados = (socket, payload) => {
     $divElement.scrollIntoView(false);
     // Scroll al final de los mensajes...
     document.getElementById('chat').style.display='block';
-    console.log(message)
+   
 
     document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
   }
