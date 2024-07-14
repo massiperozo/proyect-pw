@@ -1519,6 +1519,9 @@ function mostrarFormularioNombre() {
             e.preventDefault();
             const username = this.querySelector('input').value;
             if (username) {
+              document.querySelectorAll('body > *:not(#inicio)').forEach(element => {
+                     element.style.display = 'none';
+                    });
                 localStorage.setItem('name', username);
                 ocultarElementos();
 
@@ -1529,6 +1532,7 @@ function mostrarFormularioNombre() {
                   <button id="btnEmpleados">Empleados</button>
                     `;
                   document.body.appendChild(contenedorBotones);
+                  
 
                   contenedorBotones.style.position = 'fixed';
                   contenedorBotones.style.top = '50%';
@@ -1602,9 +1606,9 @@ function mostrarFormularioNombre() {
                   });
 
                   btnEmpleados.addEventListener('click', () => {
-                    document.querySelectorAll('body > *:not(#inicio)').forEach(element => {
-                     element.style.display = 'none';
-                    });
+                    document.querySelectorAll('#menu > *:not(#inicio, #menu)').forEach(element => {
+  element.style.display = 'none';
+});
                     contenedorBotones.style.display = 'none';
 
                       const socket=io.connect(urlBase, {
@@ -1658,13 +1662,36 @@ function mostrarFormularioNombre() {
                     
                   });
 
-            
+                  document.body.appendChild(contenedorBotones);
             }
         };
         document.body.appendChild(formNombre);
     }
-    else {document.querySelector('.form-nombre').style.display= 'flex'}
+    else {
+  const formNombre = document.querySelector('.form-nombre');
+  const contenedorBotones = document.querySelector('.contenedor-botones');
+
+  if (formNombre!== null) {
+    formNombre.remove();
+  }
+
+  if (contenedorBotones!== null) {
+    contenedorBotones.remove();
+  }
+
+  // Llamar a la función que crea los botones nuevamente
+  mostrarFormularioNombre();
 }
+}
+ 
+
+
+
+  
+
+
+
+  
 
 function configurarSocketListeners() {
     socket.on('online-users', renderUsers);
