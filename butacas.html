@@ -213,18 +213,15 @@ p {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  margin:10px;
-  top: 680px;
-  
+  margin: 10px;
+  margin-bottom: 60%; /* Agregar margen inferior para bajar el botón */
+  top: 80%;
 }
-
-
 
 .reserve-button:hover {
   background-color: #060713; /* Cambiar color al pasar el ratón */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Agregar sombra para que sobresalga */
 }
-
 
 .reserve-button2 {
   margin-top: 1rem;
@@ -235,10 +232,9 @@ p {
   border-radius: 5px;
   cursor: pointer;
   margin: 10px;
-  top: 680px;
-  
+  margin-bottom: 60%; /* Agregar margen inferior para bajar el botón */
+  top: 80%;
 }
-
 .mi-boton {
   position: relative;
   padding: 10px 20px;
@@ -1217,11 +1213,13 @@ function MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
   const reserveButton = document.createElement('button');
   reserveButton.textContent = 'Reservar';
   reserveButton.name ='Reservar';
+
   reserveButton.className = 'reserve-button'; // Agregamos la clase reserve-button
   reserveButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
   reserveButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
   reserveButton.style.position = 'absolute'; // Posicionar absolutamente
   reserveButton.style.left = '40%'; // Centrar horizontalmente
+  
   reserveButton.style.transform = 'translate(-50%, -50%)'; // Corregir posición
   
   reserveButton.addEventListener('click', () => {
@@ -1237,6 +1235,7 @@ function MostrarConfirmar(salaName, hora, showtimeId, auditoriumId, Cineid, nomb
   cancelButton.textContent = 'Cancelar';
   cancelButton.name ='Cancelar';
   cancelButton.className = 'reserve-button2'; 
+
   cancelButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
   cancelButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
   cancelButton.style.position = 'absolute'; // Posicionar absolutamente
@@ -1266,6 +1265,7 @@ function MostrarCancelarReserva(salaName, hora, showtimeId, auditoriumId, Cineid
   cancelButton2.textContent = 'Cancelar Reserva';
   cancelButton2.name ='Cancelar';
   cancelButton2.className = 'reserve-button2'; 
+
   cancelButton2.style.margin = '20px auto'; // Agregar margen para que sobresalga
   cancelButton2.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
   cancelButton2.style.position = 'absolute'; // Posicionar absolutamente
@@ -1286,6 +1286,7 @@ function MostrarCancelarReserva(salaName, hora, showtimeId, auditoriumId, Cineid
   noCancelButton.textContent = 'No Cancelar';
   noCancelButton.name ='Reservar';
   noCancelButton.id ='Reservar';
+ 
   noCancelButton.className = 'reserve-button'; // Agregamos la clase reserve-button
   noCancelButton.style.margin = '20px auto'; // Agregar margen para que sobresalga
   noCancelButton.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)'; // Agregar sombra para que sobresalga
